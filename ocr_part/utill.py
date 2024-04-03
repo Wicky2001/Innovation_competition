@@ -1,18 +1,31 @@
 import glob
 import os
-import  cv2
+import cv2
 import numpy as np
-import easyocr
-from pdf2image import convert_from_path, convert_from_bytes
+
+from google.cloud import vision
+from pdf2image import convert_from_path
 
 pdf_folder_path = '../pdf_files'
 
+
 def convert_pdf_to_images(pdf_folder_path):
     """
-      :return type:
+    Converts PDF files in a folder to images.
+
+    input type:
+        pdf_folder_path: str
+            Path to the folder that contains PDF files.
+
+    return:
+        pdf : a list containing pdf objects
+            Keys:
+                - "pdf_name": str
+                    File name of the PDF without extension.
+                - "pdf_images": list
+
 
     """
-
 
     # Set the path to the folder containing your PDF files
 
@@ -47,52 +60,88 @@ def convert_pdf_to_images(pdf_folder_path):
             # add converted pdf to a list
             pdf_list.append(pdf)
 
-        return   pdf_list
+        return pdf_list
 
 
     except Exception as e:
         print(f"An error occurred when converting pdf to images: {e}")
 
 
-
-
-def get_text_from_images(pdf_list):
+def extract_the_text_from_CV2image(cv2_image):
     """
-        Extract text from images in PDF objects.
+          Use google vision api to read text from given image
 
-        :param pdf_objects: A list of PDF objects.
-                            Each PDF object contains the name of the PDF file and a list of converted images.
-                            Example PDF object: {"pdf_name": file_name_without_extension, "pdf_images": converted_images_list}
-        :type pdf_objects: list
+          :returns
+            text
 
-        :return: A list of PDF objects.
-                 Each PDF object contains the name of the PDF file and the extracted text.
-                 Example PDF object: {"pdf_name": file_name_without_extension, "pdf_text": String}
-        :rtype: list
+           """
+
+    # Use environment variable for credentials
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../credentials/innovation-competition-a66b761b487c.json"
+
+    client = vision.ImageAnnotatorClient()
+
+    # Here converting cv2 image in to jpg because cloud vision do not support cv2 format
+    success, encoded_image = cv2.imencode('.jpg', cv2_image)
+    content = encoded_image.tobytes()
+
+    image = vision.Image(content=content)
+    response = client.text_detection(image=image)
+    texts = response.text_annotations
+
+    text = ""
+
+    for text in texts:
+        description = text.description
+        text = description
+        break
+
+    if response.error.message:
+        raise Exception(
+            "{}\nFor more info on error messages, check: "
+            "https://cloud.google.com/apis/design/errors".format(response.error.message)
+        )
+
+    return text
 
 
-
-
+def get_text_from_pdf(pdf_list):
     """
-    reader = easyocr.Reader(['en'], gpu=False)
-    alpha = 1.5
-    beta = 5
+        Red pdf images and extract their texts.
+
+        input type:
+             A List containing below type of objects
+                   pdf = {"pdf_name": file_name_without_extension, "pdf_images": converted_images}
+
+                          pdf_name : string
+                          pdf_images : list containing cv2 images
+        return:
+             A List containing below type of objects
+                   pdf = {"pdf_name": file_name_without_extension, "pdf_text": text_of_pdf}
+
+                   pdf_name : string
+                   pdf_text : string
+
+
+
+        """
+
+    pdf_list_with_text = []
 
     for pdf in pdf_list:
+
         pdf_name = pdf['pdf_name']
         pdf_images = pdf['pdf_images']
 
         text_of_pdf = ""
         for image in pdf_images:
-            adjusted_image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
-            adjusted_image_gray = cv2.cvtColor(adjusted_image, cv2.COLOR_BGR2GRAY)
-            adjusted_image_gray_thres = cv2.adaptiveThreshold(adjusted_image_gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY, 21,30)
-            result = reader.readtext(image,paragraph = True)
-            print(result)
+            text_of_image = extract_the_text_from_CV2image(image)  # This function is written using google vision api
+            text_of_pdf += text_of_image
 
+        pdf = {"pdf_name": pdf_name, "pdf_text": text_of_pdf}
 
-
+        pdf_list_with_text.append(pdf)
 
 
 list_of_pdf = convert_pdf_to_images(pdf_folder_path)
-get_text_from_images(list_of_pdf)
+get_text_from_pdf(list_of_pdf)
