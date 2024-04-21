@@ -1,25 +1,21 @@
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'; // Import necessary components
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Desktop from './Coponents/Pages/Desktop';
+
+class App extends Component {
+  render() {
+    return (
+      <div>
+        <BrowserRouter>
+          <Routes> {/* Use Routes instead of Switch */}
+            <Route exact path="/" element={<Desktop />} /> {/* Use element prop instead of component */}
+          </Routes>
+        </BrowserRouter>
+      </div>
+    );
+  }
 }
 
 export default App;
