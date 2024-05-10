@@ -1,0 +1,65 @@
+.frame-inner {
+    height: 73px;
+    width: 92px;
+    position: relative;
+    object-fit: cover;
+  }
+  .container-parent {
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--gap-15xl);
+    min-width: 770px;
+    max-width: 100%;
+  }
+  .container-parent,
+  .frame-parent6,
+  .pdf {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .frame-parent6 {
+    align-self: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--gap-smi);
+    max-width: 100%;
+  }
+  .pdf {
+    width: 100%;
+    position: relative;
+    background-color: var(--color-black);
+    overflow: hidden;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: var(--padding-85xl) var(--padding-109xl) var(--padding-63xl)
+      var(--padding-3xl);
+    box-sizing: border-box;
+    gap: var(--gap-81xl);
+    line-height: normal;
+    letter-spacing: normal;
+  }
+  @media screen and (max-width: 1050px) {
+    .container-parent {
+      min-width: 100%;
+    }
+  }
+  @media screen and (max-width: 750px) {
+    .container-parent {
+      gap: var(--gap-mid);
+    }
+    .pdf {
+      gap: var(--gap-31xl);
+      padding-right: var(--padding-45xl);
+      box-sizing: border-box;
+    }
+  }
+  @media screen and (max-width: 450px) {
+    .pdf {
+      gap: var(--gap-6xl);
+      padding-right: var(--padding-xl);
+      box-sizing: border-box;
+    }
+  }
+  

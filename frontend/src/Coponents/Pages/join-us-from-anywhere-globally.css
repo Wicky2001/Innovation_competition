@@ -1,0 +1,307 @@
+.icons8-import-pdf-50-3-29 {
+    height: 50px;
+    width: 50px;
+    position: relative;
+    object-fit: cover;
+  }
+  .answer-pdf-here3,
+  .click-to-upload5 {
+    margin: 0;
+  }
+  .click-to-upload-container5 {
+    align-self: stretch;
+    position: relative;
+    font-weight: 100;
+  }
+  .click-to-upload-or-drop-answer-wrapper1 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--padding-12xs) 0 0;
+  }
+  .frame-wrapper10,
+  .icons8-import-pdf-50-3-2-group {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .icons8-import-pdf-50-3-2-group {
+    width: 312px;
+    justify-content: flex-start;
+    gap: var(--gap-xl);
+  }
+  .frame-wrapper10 {
+    width: 476px;
+    justify-content: center;
+    padding: 0 var(--padding-xl);
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+  .icons8-camera-50-16 {
+    width: 25px;
+    height: 23px;
+    position: relative;
+    object-fit: cover;
+  }
+  .icons8-camera-50-1-wrapper3 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--padding-12xs) 0 0;
+  }
+  .enter-your-answer3 {
+    width: 215px;
+    border: 0;
+    outline: 0;
+    font-weight: 300;
+    font-family: var(--font-inter);
+    font-size: var(--font-size-lg);
+    background-color: transparent;
+    height: 21px;
+    position: relative;
+    color: var(--color-gray-300);
+    text-align: left;
+    display: inline-block;
+    text-shadow: 1px 0 0#000, 0 1px 0#000, -1px 0 0#000, 0-1px 0#000;
+    padding: 0;
+  }
+  .welcome-to-digital-world {
+    align-self: stretch;
+    border-radius: var(--br-3xs);
+    border: 1px solid var(--color-dimgray);
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--padding-2xs) var(--padding-lg);
+    gap: var(--gap-8xl);
+  }
+  .frame-parent23,
+  .join-us-from-anywhere-globally-inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 100%;
+  }
+  .frame-parent23 {
+    align-self: stretch;
+    align-items: flex-end;
+    gap: var(--gap-52xl);
+  }
+  .join-us-from-anywhere-globally-inner {
+    flex: 1;
+    align-items: flex-start;
+    padding: var(--padding-19xl) 0 0;
+    box-sizing: border-box;
+    min-width: 325px;
+  }
+  .our-work-culture {
+    height: 253px;
+    width: 1px;
+    position: relative;
+    border-right: 1px solid var(--color-gray-400);
+    box-sizing: border-box;
+  }
+  .icons8-import-pdf-50-3-210 {
+    height: 50px;
+    width: 50px;
+    position: relative;
+    object-fit: cover;
+  }
+  .click-to-upload6,
+  .marking-scheme-pdf4 {
+    margin: 0;
+  }
+  .click-to-upload-container6 {
+    align-self: stretch;
+    position: relative;
+    font-weight: 100;
+  }
+  .click-to-upload-or-drop-markin-wrapper1 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--padding-12xs) 0 0;
+    box-sizing: border-box;
+    min-width: 181px;
+  }
+  .click-to-upload-m-s-btn,
+  .icons8-import-pdf-50-3-2-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    max-width: 100%;
+  }
+  .icons8-import-pdf-50-3-2-container {
+    flex: 1;
+    justify-content: flex-start;
+    gap: var(--gap-xl);
+  }
+  .click-to-upload-m-s-btn {
+    width: 462px;
+    justify-content: flex-end;
+    padding: 0 var(--padding-38xl);
+    box-sizing: border-box;
+  }
+  .icons8-camera-50-17 {
+    width: 25px;
+    height: 23px;
+    position: relative;
+    object-fit: cover;
+  }
+  .marking-scheme-input,
+  .send-button3 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--padding-4xs) var(--padding-6xs) 0 0;
+  }
+  .send-button3 {
+    width: calc(100% - 59px);
+    border: 0;
+    outline: 0;
+    background-color: transparent;
+    height: 29px;
+    flex: 1;
+    padding: var(--padding-5xs) 0 0;
+    box-sizing: border-box;
+    font-family: var(--font-inter);
+    font-weight: 300;
+    font-size: var(--font-size-lg);
+    color: var(--color-gray-300);
+    text-shadow: 1px 0 0#000, 0 1px 0#000, -1px 0 0#000, 0-1px 0#000;
+    min-width: 227px;
+    max-width: 100%;
+  }
+  .icons8-send-30-1-13 {
+    height: 37px;
+    width: 34px;
+    position: relative;
+    z-index: 1;
+  }
+  .reach-out-to-us {
+    align-self: stretch;
+    border-radius: var(--br-3xs);
+    border: 1px solid var(--color-dimgray);
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--padding-9xs) var(--padding-mid) var(--padding-8xs);
+    gap: var(--gap-3xl);
+    max-width: 100%;
+  }
+  .icons8-upload-30-13 {
+    height: 46px;
+    width: 61px;
+    position: relative;
+    object-fit: cover;
+  }
+  .click-to-upload7 {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0 var(--padding-21xl);
+  }
+  .click-to-upload-m-s-btn-parent,
+  .mark-scheme-upload {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: var(--gap-12xl);
+    max-width: 100%;
+  }
+  .click-to-upload-m-s-btn-parent {
+    gap: var(--gap-52xl);
+  }
+  .join-us-from-anywhere-globally,
+  .join-us-from-anywhere-globally-child {
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    max-width: 100%;
+  }
+  .join-us-from-anywhere-globally-child {
+    flex: 1;
+    flex-direction: column;
+    padding: var(--padding-19xl) 0 0;
+    min-width: 325px;
+  }
+  .join-us-from-anywhere-globally {
+    width: 1185px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: var(--br-39xl);
+    background-color: var(--color-gray-100);
+    border: 1px solid var(--color-gray-400);
+    overflow: hidden;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: var(--padding-20xl) var(--padding-24xl) var(--padding-xs)
+      var(--padding-25xl);
+    gap: var(--gap-28xl-5);
+    text-align: center;
+    font-size: var(--font-size-lg);
+    color: var(--color-white);
+    font-family: var(--font-inter);
+  }
+  @media screen and (max-width: 1200px) {
+    .join-us-from-anywhere-globally {
+      padding-left: var(--padding-3xl);
+      padding-right: var(--padding-2xl);
+      box-sizing: border-box;
+    }
+  }
+  @media screen and (max-width: 1050px) {
+    .our-work-culture {
+      width: 100%;
+      height: 1px;
+    }
+  }
+  @media screen and (max-width: 750px) {
+    .frame-parent23 {
+      gap: var(--gap-16xl);
+    }
+    .reach-out-to-us {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .mark-scheme-upload {
+      gap: var(--gap-mini);
+    }
+    .click-to-upload-m-s-btn-parent {
+      gap: var(--gap-16xl);
+    }
+    .join-us-from-anywhere-globally {
+      gap: var(--gap-5xl);
+    }
+  }
+  @media screen and (max-width: 450px) {
+    .frame-parent23 {
+      gap: var(--gap-lg);
+    }
+    .icons8-import-pdf-50-3-2-container {
+      flex-wrap: wrap;
+    }
+    .click-to-upload-m-s-btn {
+      padding-left: var(--padding-9xl);
+      padding-right: var(--padding-9xl);
+      box-sizing: border-box;
+    }
+    .click-to-upload-m-s-btn-parent {
+      gap: var(--gap-lg);
+    }
+  }
+  
