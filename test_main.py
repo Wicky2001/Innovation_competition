@@ -1,41 +1,40 @@
-import cv2
-# alpha = 1.5 # Contrast control
-# beta = 10 # Brightness control
-
-import  easyocr
-
-reader = easyocr.Reader(['en'], gpu=False)
-img = cv2.imread(r"C:\Users\Wicky\Documents\GitHub\Innovation_competition\ocr_part\test_image_high_brightness.jpeg")
-
-
-# call convertScaleAbs function
-
-
-#It is mandatory to convert image to gray scale before apply threshold
-img_gray_1 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+from utils import *
+from models import *
 
 
 
-adaptive_thresh_1 = cv2.adaptiveThreshold(img_gray_1, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 30)
+# list_of_pdf = convert_pdf_to_images(pdf_folder_path)
+# print(get_text_from_pdf(list_of_pdf))
 
-# ret, simple_thresh = cv2.threshold(img_gray, 80, 255, cv2.THRESH_BINARY)
+pdf_list_with_pdf_name_and_pdf_text = [{'pdf_name': 'CS_2020_035',
+        'pdf_text': "University Of KelaniyeMid-term test[1.What are the "
+                    "four pillars of Java?]{Encapsulation: Bundling data "
+                    "and methods together to control access.Inheritance: "
+                    "Creating new classes (subclasses) based on existing ones "
+                    "(superclasses) to reusecode.Polymorphism: Allowing objects "
+                    "of different classes to respond to the same method call"
+                    " indifferent ways.Abstraction: Focusing on essential "
+                    "details and hiding implementation specifics.}[2. "
+                    "Shortly describe routing in networking.]{routing is the process of selecting the best path for data packets "
+                    "to travel from their sourceto their destination across interconnected net"
+                    "works. It's like a traffic controller for data,directing packets e"
+                    "fficiently to their final point.}"},{'pdf_name': 'paper_sample_2',
+        'pdf_text': "University Of KelaniyeMid-term test[1.What are the "
+                    "four pillars of Java?]{Encapsulation: Bundling data "
+                    "and methods together to control access.Inheritance: "
+                    "Creating new classes (subclasses) based on existing ones "
+                    "(superclasses) to reusecode.Polymorphism: Allowing objects "
+                    "of different classes to respond to the same method call"
+                    " indifferent ways.Abstraction: Focusing on essential "
+                    "details and hiding implementation specifics.}[2. "
+                    "Shortly describe routing in networking.]{routing is the process of selecting the best path for data packets "
+                    "to travel from their sourceto their destination across interconnected net"
+                    "works. It's like a traffic controller for data,directing packets e"
+                    "fficiently to their final point.}"}]
 
-
-
-
-
-cv2.imshow('image_1_low_brightness', adaptive_thresh_1)
-
-
-# cv2.imshow('image2_high_brightness', adaptive_thresh_2)
-cv2.waitKey(0)
-result = reader.readtext(adaptive_thresh_1)
-all_text = ' '.join([text for _, text, _ in result])
-print(all_text)
-
-
-alpha = 1.5
-beta = 10
-img = cv2.imread(r"C:\Users\Wicky\Documents\GitHub\Innovation_competition\ocr_part\low_bright_ness.jpeg")
-adjusted = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
-ajusted_img_gray_1 = cv2.cvtColor(adjusted, cv2.COLOR_BGR2GRAY)
+report_directory = r"C:\Users\Wicky\Documents\GitHub\Innovation_competition\reports"
+question_answer_list = extract_question_and_answers(pdf_list_with_pdf_name_and_pdf_text)
+question_answer_list_with_marks = give_marks_for_descriptive_questions(question_answer_list)
+question_answer_list_with_marks_feedbacks = give_feed_back_for_answers(question_answer_list_with_marks)
+create_pdf_report(question_answer_list_with_marks_feedbacks,report_directory)
+print(question_answer_list_with_marks_feedbacks)
