@@ -1,0 +1,49 @@
+.icons8-import-pdf-50-3-2 {
+    height: 50px;
+    width: 50px;
+    position: relative;
+    object-fit: contain;
+  }
+  .answer-pdf-here,
+  .click-to-upload {
+    margin: 0;
+  }
+  .click-to-upload-container {
+    align-self: stretch;
+    height: 42px;
+    position: relative;
+    font-weight: 100;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .click-to-upload-or-drop-answer-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--padding-12xs) 0 0;
+  }
+  .clickto-upload-or-drop-answer {
+    width: 312px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: var(--gap-xl);
+  }
+  .clickto-upload-or-drop-answer-wrapper {
+    width: 476px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 var(--padding-xl);
+    box-sizing: border-box;
+    max-width: 100%;
+    text-align: center;
+    font-size: var(--font-size-lg);
+    color: var(--color-white);
+    font-family: var(--font-inter);
+  }
+  
