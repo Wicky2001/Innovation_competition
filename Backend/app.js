@@ -1,10 +1,11 @@
-// server.js
 const fs = require('fs'); // Import the core fs module
 const fsPromises = require('fs').promises;  // Import fsPromises.promises directly
 const path = require('path');
 const multer = require("multer");
 const archiver = require('archiver');
 const cors = require('cors');
+const {spawn} =require('child_process')
+
 
 const corsOptions = {
   origin: '*', // Change to specific origins as needed
@@ -155,49 +156,67 @@ async function fileUpload(req, res) {
   }
   else{
 
-
-
-  // Simulate file processing with a delay
-  processFiles((err, resultDir) => {
-    if (err) {
-      return res.status(500).send('Error processing files');
-    }
-    if (connectedClients[clientId] !=" ") {
+    try{
+      resultDir=await processFiles(testDir)
+      if (connectedClients[clientId] !=" ") {
+        
+        connectedClients[clientId].emit('processingComplete', resultDir);
+        console.log(`event is emmited ${resultDir}`);
+      }
+      else{
+        res.status(401).send('not authorized');
+        return;
+      }
       
-      // const documentsIndex = resultDir.indexOf('Innovation_competition') + 'Innovation_competition'.length;
-      // const resultDir = absolutePath.slice(documentsIndex + 1);
-      connectedClients[clientId].emit('processingComplete', resultDir);
-      console.log(`event is emmited ${resultDir}`);
-    }
-    else{
-      res.status(401).send('not authorized');
+      console.log('processingComplete event emitted with resultDir:', resultDir);
+      res.status(200).send('Files uploaded and processing started');
       return;
+    }catch (error) {
+      console.error('Error during file processing:', error.message);
+      res.status(500).json({ error: error.message });
     }
-    
-    console.log('processingComplete event emitted with resultDir:', resultDir);
-    res.status(200).send('Files uploaded and processing started');
-    return;
-  }
-);
+  // Simulate file processing with a delay
+
+}
+
   
   }
   // res.json({ message: "Successfully uploaded files" });
-}
 
-function processFiles(callback) {
-  setTimeout(() => {
-    const resultDir = path.resolve(__dirname, testDir);
-    console.log(`result dir is created, now you can log it: ${resultDir}`);
-    callback(null, resultDir);
-  }, 5000);
+function processFiles(dirForProcess) {
+ // Spawn a new process to run the Python script
+ return new Promise((resolve, reject) => {
+    const pythonProcess = spawn('python', ['./Model/script.py',dirForProcess]);
+
+    let resultDir=''
+    let errorString = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+      resultDir = data.toString();
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      errorString = data.toString();
+    });
+
+    pythonProcess.on('close', (code) => {
+      if (code !== 0) {
+        return reject(new Error(`Process exited with code ${code}\n${errorString}`));
+      }
+      try {
+        // const result = JSON.parse(resultDir);
+        resolve(resultDir);
+      } catch (error) {
+        reject(error);
+      }
+    });
+
+ })
 }
 
 app.get('/download-results', (req, res) => {
   console.log("Request is found for download...");
-  // res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  // res.setHeader('Pragma', 'no-cache');
-  // res.setHeader('Expires', '0');
-  // res.setHeader('Surrogate-Control', 'no-store');
+  
   const zipFilename = 'results.zip';
   const zipPath = path.join(__dirname,testDir, zipFilename);
 
@@ -214,13 +233,13 @@ app.get('/download-results', (req, res) => {
         res.status(500).send('Error downloading  file');
       } else {
         console.log('File sent successfully!');
-        fs.unlink(zipPath, (err) => {
-          if (err) {
-            console.error('Error deleting zip file:', err);
-          } else {
-            console.log('Temporary zip file deleted');
-          }
-        });
+        // fs.unlink(zipPath, (err) => {
+        //   if (err) {
+        //     console.error('Error deleting zip file:', err);
+        //   } else {
+        //     console.log('Temporary zip file deleted');
+        //   }
+        // });
       }
     });
   });
