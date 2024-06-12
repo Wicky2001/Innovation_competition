@@ -1,9 +1,11 @@
+#folders
 pdf_files/
 Images/
 credentials/
 reports/
-vector_database/
-
+.idea
+vector_database
+reports
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
