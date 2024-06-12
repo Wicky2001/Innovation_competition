@@ -1,7 +1,9 @@
 pdf_files/
 Images/
 credentials/
-vector_database/
+Slytherin_IdeaForge[1].docx
+vector_database
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
