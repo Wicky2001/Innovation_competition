@@ -19,6 +19,48 @@
 }
 
 @keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+.click-to-upload-or-drop-answer-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--padding-12xs) 0 0;
+}
+
+.upload-container {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px;
+  
+ 
+}
+
+
+.col {
+  display: flex;
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  flex-direction: column; /* Stack elements vertically */
+}
+
+.file-upload-wrapper {
+  margin-bottom: 10px; /* Add some spacing between the file input and text input */
+}
+
+.file-label {
+  cursor: pointer;
+  font-size: 24px; /* Adjust size as needed */
 }
