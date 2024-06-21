@@ -7,6 +7,9 @@ reports/
 Backend/Model/vector_database
 Backend/PDF
 Backend/REPORTS
+Backend/Model/.idea
+Backend/Model/node_modules
+
 
 
 # Byte-compiled / optimized / DLL files
