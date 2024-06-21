@@ -14,7 +14,7 @@ import {handleSubmit} from "../../functions/fileUpload"
 
 
 const Desktop = ({clientId,processComplete}) => {
-console.log("desktooooooop"+clientId);
+console.log("desktop"+clientId);
   return (
     <div className="desktop">
       <div className="desktop-inner">

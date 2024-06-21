@@ -4,8 +4,11 @@ Images/
 credentials/
 reports/
 .idea
-vector_database
+Backend/Model/vector_database
 reports
+Backend/PDF
+Backend/REPORTS
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
