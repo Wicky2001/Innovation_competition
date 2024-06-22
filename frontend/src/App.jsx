@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./App.css";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Desktop from "./Coponents/Pages/Desktop";
 import { io } from "socket.io-client";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 const { v4: uuidv4 } = require("uuid");
 
 const App = () => {

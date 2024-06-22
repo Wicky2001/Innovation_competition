@@ -275,16 +275,11 @@ app.get("/download-results", (req, res) => {
         res.status(500).send("Error downloading  file");
       } else {
         console.log("File sent successfully!");
-        // fs.unlink(zipPath, (err) => {
-        //   if (err) {
-        //     console.error('Error deleting zip file:', err);
-        //   } else {
-        //     console.log('Temporary zip file deleted');
-        //   }
-        // });
       }
     });
   });
+
+  const zipReports = (zipLocation) => {};
 
   archive.on("error", (err) => {
     console.error("Archiving error:", err);

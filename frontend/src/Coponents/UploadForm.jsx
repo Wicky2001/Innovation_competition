@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { FaRegFilePdf, FaFileCircleCheck } from "react-icons/fa6";
 import { TbCloudCancel } from "react-icons/tb";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { GrUploadOption } from "react-icons/gr";
+import "./UploadForm.css";
 
-function UploadForm() {
+function UploadForm({ clientId, handleSubmit }) {
   const [markingSchemeFileSelected, setMarkingSchemeFileSelected] =
     useState(false);
   const [answerSheetFileSelected, setAnswerSheetFileSelected] = useState(false);
@@ -12,11 +13,11 @@ function UploadForm() {
 
   const changeFileUploadLogo = (fileSelected) => {
     if (fileSelected) {
-      return <FaFileCircleCheck />;
+      return <FaFileCircleCheck color="gray" />;
     } else if (disableFileInputs) {
-      return <TbCloudCancel />;
+      return <TbCloudCancel color="gray" />;
     } else {
-      return <FaRegFilePdf />;
+      return <FaRegFilePdf color="gray" />;
     }
   };
 
@@ -24,7 +25,7 @@ function UploadForm() {
     <>
       <div className="container upload-container">
         <div className="row justify-content-center">
-          <form>
+          <form method="POST">
             <div className="row">
               <div className="col">
                 <div className="file-upload-wrapper">
@@ -52,7 +53,7 @@ function UploadForm() {
                   type="text"
                   disabled={disableTextInput}
                   className="form-control"
-                  id="exampleInputPassword1"
+                  id="markingSchemeText"
                   placeholder="Marking Scheme"
                   onChange={(event) => {
                     if (event.target.value.length > 0) {
@@ -103,9 +104,22 @@ function UploadForm() {
               </div>
             </div>
             <div className="row mt-3">
-              <div className="col">
-                <button type="submit" className="btn btn-primary">
-                  Submit
+              <div className="upload-button-container">
+                <button
+                  type="submit"
+                  className="upload-button"
+                  onClick={(event) => {
+                    handleSubmit(event, clientId);
+                  }}
+                  disabled={
+                    !markingSchemeFileSelected && !answerSheetFileSelected
+                  }
+                >
+                  {markingSchemeFileSelected && answerSheetFileSelected ? (
+                    <GrUploadOption color="green" size={40} />
+                  ) : (
+                    <GrUploadOption color="red" size={40} />
+                  )}
                 </button>
               </div>
             </div>
