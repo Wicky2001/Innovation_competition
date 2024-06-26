@@ -1,11 +1,12 @@
-const { v4: uuidv4 } = require("uuid");
 import socket from "./socket";
+
+const { v4: uuidv4 } = require("uuid");
 
 // Listen for the 'processingComplete' event from the server
 
 socket.on("connect", () => {
   const userId = uuidv4();
-  console.log("Connected to the server");
+  console.log("Web socket is established");
   socket.emit("register", userId);
 });
 

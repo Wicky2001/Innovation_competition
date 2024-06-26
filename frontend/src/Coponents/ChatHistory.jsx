@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import socket from "../functions/socket"; // Import the shared socket instance
-// import { PiFileZipDuotone } from "react-icons/pi";
+import downloadZipFile from "../functions/handleDownload";
 import { BsFileEarmarkZip } from "react-icons/bs";
-function ChatHistory() {
+function ChatHistory({ clientId }) {
   const [historyData, setHistoryData] = useState([]);
 
   function removeDuplicates(array, key) {
@@ -22,8 +22,6 @@ function ChatHistory() {
         const updatedHistoryData = [...prevHistoryData, data];
         return removeDuplicates(updatedHistoryData, "chatId"); // Adjust the key as per your data structure
       });
-
-      console.log("Received zip file path:", data.filePath);
     };
 
     // Listen for 'data' event from server
@@ -35,8 +33,14 @@ function ChatHistory() {
     };
   }, []);
   return (
-    <div className="tableContainer">
-      <table className="table table-dark" style={{ padding: 0 }}>
+    <div
+      className="tableContainer"
+      style={{ marginBottom: "210px", paddingTop: "30px" }}
+    >
+      <table
+        className="table table-dark"
+        style={{ padding: 0, backgroundColor: "rgb(28, 28, 28)" }}
+      >
         <tbody>
           {historyData.map((data, key) => (
             <tr id={key}>
@@ -53,10 +57,17 @@ function ChatHistory() {
                   <BsFileEarmarkZip color="gray" size={30} />
                   <p className="result-label">
                     Result<sup>{data.chatId}</sup>
+                    {console.log("Received zip file path:", data)}
                   </p>
                 </div>
                 <div className="col button-row-column">
-                  <button type="button" class="btn btn-outline-success">
+                  <button
+                    type="button"
+                    class="btn btn-outline-success"
+                    onClick={() => {
+                      downloadZipFile(data.zipFilePath, clientId);
+                    }}
+                  >
                     Download
                   </button>
                 </div>

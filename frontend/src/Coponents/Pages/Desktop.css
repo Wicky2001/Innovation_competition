@@ -1,0 +1,11 @@
+.main-content {
+    margin-bottom: 10px;/* To ensure content isn't hidden behind the fixed UploadForm */
+    height: 10%;
+    overflow-y: auto;
+    
+  }
+
+ 
+  /* Set a height and a max-height on the div, and set overflow-y: scroll. This will restrict the 
+  div to so tall and let you scroll the div.
+   If you don’t want your whole page to be scrollable, simply set overflow: hidden on the body. */

@@ -131,7 +131,11 @@ async function fileUpload(req, res) {
   }
 
   try {
-    const resultDir = await processFiles(chatDirectoryPath, chatDirectoryName);
+    const resultDir = await processFiles(
+      chatDirectoryPath,
+      chatDirectoryName,
+      clientId
+    );
     if (connectedClients[clientId]) {
       connectedClients[clientId].emit("processingComplete", resultDir);
     } else {
@@ -146,7 +150,7 @@ async function fileUpload(req, res) {
   }
 }
 
-function processFiles(dirForProcess, chatDirectoryName) {
+function processFiles(dirForProcess, chatDirectoryName, clientId) {
   return new Promise((resolve, reject) => {
     const pythonProcess = spawn(
       "C:\\Users\\Wicky\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Python 3.8\\Scripts\\python.exe",
@@ -186,7 +190,7 @@ function processFiles(dirForProcess, chatDirectoryName) {
         reports_location = jsonData.reports_location;
         if (jsonData.status === "success") {
           try {
-            createZip();
+            createZip(clientId);
           } catch (error) {
             console.error("Error creating zip:", error);
           }
@@ -209,7 +213,7 @@ function processFiles(dirForProcess, chatDirectoryName) {
   });
 }
 
-const createZip = () => {
+const createZip = (clientId) => {
   const zipFilename = "results.zip";
   const zipPath = path.join(reports_location, zipFilename);
   const output = fs.createWriteStream(zipPath);
@@ -223,8 +227,9 @@ const createZip = () => {
     const dataForFrontEnd = {
       zipFilePath: zipPath,
       chatId: chatDirectoryName,
+      processComplete: true,
     };
-    io.emit("data", dataForFrontEnd);
+    connectedClients[clientId].emit("data", dataForFrontEnd); // sending location of the zip file to frontend
   });
 
   archive.on("error", (err) => {
@@ -233,9 +238,39 @@ const createZip = () => {
 };
 
 app.get("/download-results", (req, res) => {
-  res.download(reports_location, (err) => {
+  const zipLocation = req.query.zip_location;
+  const acceptHeader = req.headers.accept;
+  const clientId = req.query.clientId;
+
+  console.log("Received client ID:", clientId);
+  console.log("Received zip_location:", zipLocation); // Debugging log
+  console.log("Received Accept header:", acceptHeader); // Debugging log
+
+  // Ensure the Accept header is for a zip file
+  if (acceptHeader !== "application/zip") {
+    return res.status(400).send("Invalid Accept header");
+  }
+
+  // Ensure zipLocation is provided
+  if (!zipLocation) {
+    return res.status(400).send("zip_location query parameter is required");
+  }
+
+  const filePath = path.resolve(zipLocation);
+  console.log("Resolved file path:", filePath); // Debugging log
+
+  // Check if the file exists
+  if (!fs.existsSync(filePath)) {
+    console.error("File not found:", filePath); // Debugging log
+    return res.status(404).send("File not found");
+  }
+
+  // Send the zip file
+  res.setHeader("Content-Type", "application/zip");
+  res.sendFile(filePath, (err) => {
     if (err) {
       console.error("Error sending file:", err);
+      res.status(500).send("Error sending file");
     }
   });
 });
@@ -249,10 +284,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("A client disconnected:", socket.id);
     // Remove client from connectedClients
     for (const [key, value] of Object.entries(connectedClients)) {
       if (value.id === socket.id) {
+        console.log("A client disconnected:", socket.id);
+        console.log("The client also unregistered:", value.id);
         delete connectedClients[key];
         break;
       }

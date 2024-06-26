@@ -38,15 +38,15 @@
   }
   
   .upload-container {
-    position: absolute;
-    bottom: 10px;
+    position: fixed;
+    bottom: -6px;
     left: 50%;
     transform: translateX(-50%);
     padding-top: 2px;
     border: solid 1px #6e6b6b;
     border-radius: 10px;
-    background-color: #7d74743e;
-  
+    background-color: #282727;
+    z-index: 1000;
   }
   
   .col {
@@ -69,15 +69,31 @@
     background-color: rgba(255, 253, 253, 0);
     border: none;
     cursor: pointer;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+   
+   
+  }
+
+  /* .spinner_container{
+    background-color: rgba(255, 253, 253, 0);
+    border: none;
+    cursor: pointer;
     height: 32px;
     width: 32px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-   
-   
-  }
+    margin-bottom: 2px;
+  } */
+
+  
   
   .upload-button:hover{
     background-color: #e0dddd14;
