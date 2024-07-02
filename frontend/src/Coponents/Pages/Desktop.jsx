@@ -1,17 +1,21 @@
 import "./Desktop.css";
 import "./global.css";
-import Chat from "../Chat.jsx";
+import ChatHistory from "../ChatHistory";
 import { handleSubmit } from "../../functions/fileUpload";
 
 import UploadForm from "../UploadForm";
 
+import "./Desktop.css";
+// import Chat from "C:UsersWickyDocumentsGitHubInnovation_competition\frontendsrcCoponentsChat.jsx";
 
-const Desktop = ({ clientId, processComplete, }) => {
+const Desktop = ({ clientId }) => {
   return (
-    <>
-      <Chat i={1} />
-      <UploadForm clientId={clientId} handleSubmit={handleSubmit}/>
-    </>
+    <div className="app-container">
+      <div className="main-content">
+        <ChatHistory clientId={clientId} />
+      </div>
+      <UploadForm clientId={clientId} handleSubmit={handleSubmit} />
+    </div>
   );
 };
 

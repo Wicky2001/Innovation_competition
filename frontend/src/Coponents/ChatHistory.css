@@ -1,0 +1,45 @@
+.table{
+    background-color: black;
+    width: 90%;
+}
+
+.tableContainer{
+    display: flex;
+    justify-content: center;
+    width: 70%;
+    right: 50%;
+    transform: translateX(21%);
+  
+}
+
+
+
+.col{
+    padding: 10px;
+    height: 50%;
+}
+
+.button-row-column {
+    padding-top: 7px;
+  }
+
+.zip-row-column{
+    padding:1px;
+    
+}
+.table{
+    padding: 0;
+}
+
+.row{
+    padding: 0;
+}
+
+.result-label{
+    margin:0;
+    margin-top: 5px;
+    margin-bottom: 3px;
+    font-size: small;
+    font-weight: 400;
+}
+

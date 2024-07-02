@@ -1,51 +1,43 @@
-const fs = require("fs"); // Import the core fs module
-const fsPromises = require("fs").promises; // Import fsPromises.promises directly
-const path = require("path");
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
 const multer = require("multer");
 const archiver = require("archiver");
-const cors = require("cors");
 const { spawn } = require("child_process");
+const path = require("path");
+const fs = require("fs");
+const fsPromises = fs.promises;
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 
 const corsOptions = {
   origin: "*", // Change to specific origins as needed
   methods: ["GET", "POST"],
 };
 
-let chatDirectoryPath; //This is use to pass the chat directory path to the model
-let chatDirectoryName;
-let reports_location;
-
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
-
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const baseDirectory = "./PDF/";
-
 let connectedClients = {}; // Store connected clients
 
-// Initialize multer with the storage configuration
+let chatDirectoryPath;
+let chatDirectoryName;
+let reports_location;
+let zipFilePath = null;
 
 // Custom middleware to create directories and set destination directory for multer
 async function createInnerDirectoriesMiddleware(req, res, next) {
   if (req.path === "/upload_files" && req.method === "POST") {
-    console.log(req.path);
-    console.log(req.method);
     try {
       const chatDir = await createChatDirectory();
-      if (!chatDir) {
-        throw new Error("Chat directory not created.");
-      }
+      if (!chatDir) throw new Error("Chat directory not created.");
       const innerDirs = await createInnerDirectories(chatDir);
       req.innerDirectories = innerDirs;
-      console.log(innerDirs);
       next();
     } catch (error) {
       console.error("Error creating inner directories:", error);
@@ -60,28 +52,16 @@ const storage = multer.diskStorage({
   destination: async function (req, file, cb) {
     try {
       let destinationDir;
-
       if (file.fieldname === "markingSchemeFiles") {
         destinationDir = req.innerDirectories.directories[0];
-        console.log(
-          "Destination directory for markingSchemeFiles:",
-          destinationDir
-        );
       } else if (file.fieldname === "answerSheetFiles") {
         destinationDir = req.innerDirectories.directories[1];
-        console.log(
-          "Destination directory for answerSheetFiles:",
-          destinationDir
-        );
       }
-
       cb(null, destinationDir);
     } catch (error) {
-      console.error("Error while setting destination directory:", error);
       cb(error);
     }
   },
-
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(
@@ -103,11 +83,9 @@ async function createChatDirectory() {
   chatDirectoryPath = fullChatDirectoryPath;
   chatDirectoryName = uniqueDirectoryName;
   try {
-    await fsPromises.mkdir(fullChatDirectoryPath); // Use fsPromises.mkdir for asynchronous directory creation
-    console.log("Directory created:", fullChatDirectoryPath);
+    await fsPromises.mkdir(fullChatDirectoryPath);
     return fullChatDirectoryPath;
   } catch (error) {
-    console.error("Error creating directory:", error);
     throw new Error("Chat directory not created.");
   }
 }
@@ -117,12 +95,9 @@ async function createInnerDirectories(chatDir) {
     const markingSchemeDirectory = path.join(chatDir, "markingScheme");
     const studentAnswerDirectory = path.join(chatDir, "studentAnswers");
     await fsPromises.mkdir(markingSchemeDirectory);
-    console.log("Directory created:", markingSchemeDirectory);
     await fsPromises.mkdir(studentAnswerDirectory);
-    console.log("Directory created:", studentAnswerDirectory);
     return { directories: [markingSchemeDirectory, studentAnswerDirectory] };
   } catch (error) {
-    console.error("Error creating inner directories:", error);
     throw new Error("Inner directories not properly created.");
   }
 }
@@ -130,11 +105,9 @@ async function createInnerDirectories(chatDir) {
 app.use(createInnerDirectoriesMiddleware);
 
 app.get("/", (req, res) => {
-  console.log("requesting index....");
   res.sendFile(path.join(__dirname, "../frontend/public/index.html"));
 });
 
-// Route for uploading files
 app.post(
   "/upload_files",
   upload.fields([
@@ -144,15 +117,10 @@ app.post(
   fileUpload
 );
 
-// Define the async function separately
 async function fileUpload(req, res) {
-  console.log("req found......");
-
   const clientId = req.query.clientId;
-
   const { innerDirectories } = req;
 
-  console.log("Directories created:", innerDirectories);
   if (
     !innerDirectories ||
     !innerDirectories.directories ||
@@ -160,40 +128,29 @@ async function fileUpload(req, res) {
   ) {
     res.status(500).json({ error: "Inner directories not properly created." });
     return;
-  } else {
-    try {
-      resultDir = await processFiles(chatDirectoryPath, chatDirectoryName);
-      if (connectedClients[clientId] != " ") {
-        connectedClients[clientId].emit("processingComplete", resultDir);
-        console.log(`event is emmited ${resultDir}`);
-      } else {
-        res.status(401).send("not authorized");
-        return;
-      }
+  }
 
-      console.log(
-        "processingComplete event emitted with resultDir:",
-        resultDir
-      );
-      res.status(200).send("Files uploaded and processing started");
+  try {
+    const resultDir = await processFiles(
+      chatDirectoryPath,
+      chatDirectoryName,
+      clientId
+    );
+    if (connectedClients[clientId]) {
+      connectedClients[clientId].emit("processingComplete", resultDir);
+    } else {
+      res.status(401).send("Not authorized");
       return;
-    } catch (error) {
-      console.error("Error during file processing:", error.message);
-      res.status(500).json({ error: error.message });
     }
-    // Simulate file processing with a delay
+
+    res.status(200).send("Files uploaded and processing started");
+  } catch (error) {
+    console.error("Error during file processing:", error.message);
+    res.status(500).json({ error: error.message });
   }
 }
-// res.json({ message: "Successfully uploaded files" });
 
-function processFiles(dirForProcess, chatDirectoryName) {
-  // Spawn a new process to run the Python script
-  console.log("Directory passed to Python function =", dirForProcess);
-  console.log(
-    "Chat directory name passed to Python function =",
-    chatDirectoryName
-  );
-
+function processFiles(dirForProcess, chatDirectoryName, clientId) {
   return new Promise((resolve, reject) => {
     const pythonProcess = spawn(
       "C:\\Users\\Wicky\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Python 3.8\\Scripts\\python.exe",
@@ -207,107 +164,136 @@ function processFiles(dirForProcess, chatDirectoryName) {
       }
     );
 
-    let resultData = ""; // This will hold the captured JSON string
-    let errorData = ""; // This will hold any error output
+    let resultData = "";
+    let errorData = "";
 
-    // Event listener for stdout data
     pythonProcess.stdout.on("data", (data) => {
-      console.log("Received data from Python stdout:", data.toString());
-      resultData += data.toString(); // Append received data to resultData
+      resultData += data.toString();
     });
 
-    // Event listener for stderr data (for capturing errors)
     pythonProcess.stderr.on("data", (data) => {
-      console.error("Received data from Python stderr:", data.toString());
-      errorData += data.toString(); // Append received error data
+      errorData += data.toString();
     });
 
-    // Event listener for Python process completion
     pythonProcess.on("close", (code) => {
       if (code !== 0) {
-        const errorMsg = `Python process exited with code ${code}. Error: ${errorData}`;
-        console.error(errorMsg);
-        reject(new Error(errorMsg));
+        reject(
+          new Error(
+            `Python process exited with code ${code}. Error: ${errorData}`
+          )
+        );
         return;
       }
 
       try {
-        // Parse the received JSON string into a JavaScript object
         const jsonData = JSON.parse(resultData);
         reports_location = jsonData.reports_location;
-        // Now you can access properties of jsonData
-        console.log("Status:", jsonData.status);
-        console.log("Reports Location:", jsonData.reports_location);
-
-        // Resolve the promise with the JSON data
+        if (jsonData.status === "success") {
+          try {
+            createZip(clientId);
+          } catch (error) {
+            console.error("Error creating zip:", error);
+          }
+        } else {
+          console.error("Creating reports was not successful");
+        }
         resolve(jsonData);
       } catch (error) {
-        const parseErrorMsg = `Error parsing JSON data received from Python script: ${error}`;
-        console.error(parseErrorMsg);
-        reject(new Error(parseErrorMsg));
+        reject(
+          new Error(
+            `Error parsing JSON data received from Python script: ${error}`
+          )
+        );
       }
     });
 
-    // Handle any other errors with the Python process
     pythonProcess.on("error", (error) => {
-      console.error("Error spawning Python process:", error);
       reject(new Error(`Error spawning Python process: ${error.message}`));
     });
   });
 }
 
-app.get("/download-results", (req, res) => {
-  console.log("Request is found for download..." + reports_location);
-
+const createZip = (clientId) => {
   const zipFilename = "results.zip";
   const zipPath = path.join(reports_location, zipFilename);
-
   const output = fs.createWriteStream(zipPath);
-  const archive = archiver("zip", {
-    zlib: { level: 9 },
-  });
+  const archive = archiver("zip", { zlib: { level: 9 } });
+
+  archive.pipe(output);
+  archive.directory(reports_location, false);
+  archive.finalize();
 
   output.on("finish", () => {
-    console.log("Folder zipped successfully!");
-    res.download(zipPath, zipFilename, (err) => {
-      if (err) {
-        console.error("Error sending file:", err);
-        res.status(500).send("Error downloading  file");
-      } else {
-        console.log("File sent successfully!");
-      }
-    });
+    const dataForFrontEnd = {
+      zipFilePath: zipPath,
+      chatId: chatDirectoryName,
+      processComplete: true,
+    };
+    connectedClients[clientId].emit("data", dataForFrontEnd); // sending location of the zip file to frontend
   });
-
-  const zipReports = (zipLocation) => {};
 
   archive.on("error", (err) => {
     console.error("Archiving error:", err);
-    res.status(500).send("Error creating archive");
   });
+};
 
-  archive.pipe(output);
+app.get("/download-results", (req, res) => {
+  const zipLocation = req.query.zip_location;
+  const acceptHeader = req.headers.accept;
+  const clientId = req.query.clientId;
 
-  // Ensure the correct directory is archived
+  console.log("Received client ID:", clientId);
+  console.log("Received zip_location:", zipLocation); // Debugging log
+  console.log("Received Accept header:", acceptHeader); // Debugging log
 
-  archive.directory(reports_location, false); //get all pdf inside reports_location and compress them
+  // Ensure the Accept header is for a zip file
+  if (acceptHeader !== "application/zip") {
+    return res.status(400).send("Invalid Accept header");
+  }
 
-  archive.finalize();
+  // Ensure zipLocation is provided
+  if (!zipLocation) {
+    return res.status(400).send("zip_location query parameter is required");
+  }
+
+  const filePath = path.resolve(zipLocation);
+  console.log("Resolved file path:", filePath); // Debugging log
+
+  // Check if the file exists
+  if (!fs.existsSync(filePath)) {
+    console.error("File not found:", filePath); // Debugging log
+    return res.status(404).send("File not found");
+  }
+
+  // Send the zip file
+  res.setHeader("Content-Type", "application/zip");
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error("Error sending file:", err);
+      res.status(500).send("Error sending file");
+    }
+  });
 });
 
-// Socket.io event handlers
 io.on("connection", (socket) => {
   console.log("A client connected:", socket.id);
 
   socket.on("register", (clientId) => {
     console.log("User registered:", clientId);
-
     connectedClients[clientId] = socket;
-
-    // Additional logic to handle user registration if needed
   });
 
-  // Other event handlers can be added here
+  socket.on("disconnect", () => {
+    // Remove client from connectedClients
+    for (const [key, value] of Object.entries(connectedClients)) {
+      if (value.id === socket.id) {
+        console.log("A client disconnected:", socket.id);
+        console.log("The client also unregistered:", value.id);
+        delete connectedClients[key];
+        break;
+      }
+    }
+  });
 });
 
 const PORT = 5001;
