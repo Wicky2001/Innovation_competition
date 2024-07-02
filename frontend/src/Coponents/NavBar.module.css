@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap');
+
+.navBar{
+    background-color:transparent;
+    display: flex;
+   height: 50px;
+ 
+    
+
+}
+.user{
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 10px;
+    align-items: center;
+
+}
+.userIcon{
+    color: rgb(124, 124, 124);
+    font-size: 20px;
+}
+.leftNavBar{
+    flex-basis: 0px;
+    flex-grow:0.5;
+    display: flex;
+    justify-content: space-between;
+    max-width: 300px;
+    padding-left: 15px;
+    align-items: center;
+    
+
+  
+}
+.navBar button{
+    border:none;
+    background-color: transparent;
+    color: rgb(124, 124, 124);
+}
+.sideBarIcon{
+    font-size: 22px;
+    font-weight: 800;
+    
+   
+}
+.hideSideBarIcon{
+    display: none;
+}
+.companyName{
+    color: rgb(215, 209, 209);
+    font-size: 25px;
+    font-weight: 600;
+    margin-right: 80px;
+    margin-left: 20px;
+    font-family: 'Open Sans', sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings: "wdth" 100;
+}
+
