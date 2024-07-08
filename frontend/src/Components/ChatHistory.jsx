@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import socket from "../functions/socket"; // Import the shared socket instance
 import downloadZipFile from "../functions/handleDownload";
 import { BsFileEarmarkZip } from "react-icons/bs";
-function ChatHistory({ clientId ,historyData, setHistoryData}) {
-  
-
+function ChatHistory({ clientId, historyData, setHistoryData }) {
   function removeDuplicates(array, key) {
     const unique = new Map();
     array.forEach((item) => {

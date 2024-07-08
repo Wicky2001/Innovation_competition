@@ -14,13 +14,15 @@ import {
 } from "@chakra-ui/react";
 
 import logo from "./Assects/logo.png";
+import { useState } from "react";
 
 function Login() {
+  const [register, setRegister] = useState(false);
   return (
     <Flex direction="column" align="center" justify="center" height="100vh">
       <Container centerContent maxW="450px">
         <Card width={"100%"}>
-          <CardHeader align="center">
+          <CardHeader align="center" paddingBottom={0}>
             <Image
               borderRadius="full"
               boxSize="60px"
@@ -34,18 +36,28 @@ function Login() {
               fontFamily={"Roboto"}
               margin={0}
             >
-              Login to your account
+              {register ? "Sign up" : "Sign in"}
             </Heading>
             <Text fontSize={"16px"} paddingTop={0.2}>
-              Let's mark your papers.
+              {register ? "Welcome to Grading.AI." : "Let's mark your papers."}
             </Text>
           </CardHeader>
           <CardBody paddingTop={6}>
-            <Form></Form>
+            <Form registerStatus={register}></Form>
           </CardBody>
           <CardFooter paddingY={0}>
             <Text fontSize={"13px"}>
-              Don't have an account? <Link color={"green"}>Sign up</Link>
+              {register
+                ? "Already have an account? "
+                : "Don't have an account "}
+              <Link
+                color={"green"}
+                onClick={() => {
+                  setRegister(!register);
+                }}
+              >
+                {register ? "Sign in" : "Sign up"}
+              </Link>
             </Text>
           </CardFooter>
         </Card>

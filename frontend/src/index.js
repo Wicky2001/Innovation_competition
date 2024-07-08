@@ -4,7 +4,7 @@ import App from "./App";
 
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import theme from "./theme.js";
-import "./Coponents/ChatHistory.css";
+import "./Components/ChatHistory.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
