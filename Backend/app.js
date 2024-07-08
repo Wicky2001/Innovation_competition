@@ -47,7 +47,7 @@ async function createInnerDirectoriesMiddleware(req, res, next) {
     next();
   }
 }
-
+//after createInnerDirectoriesMiddleware this function is finished multer is called.
 const storage = multer.diskStorage({
   destination: async function (req, file, cb) {
     try {
