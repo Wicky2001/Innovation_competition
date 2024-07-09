@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Desktop from "./Coponents/Pages/Desktop";
+import Desktop from "./Components/Pages/Desktop";
+import LoginPage from "./Components/Pages/LoginPage";
 import socket from "./functions/socket";
-import "./App.css";
 const { v4: uuidv4 } = require("uuid");
 
 const App = () => {
@@ -48,7 +48,8 @@ const App = () => {
     <>
       <BrowserRouter>
         <Routes>
-          <Route exact path="/" element={<Desktop clientId={clientId} />} />
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/chat" element={<Desktop clientId={clientId} />} />
         </Routes>
       </BrowserRouter>
     </>

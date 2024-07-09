@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap");
+
+.main-content {
+  margin-bottom: 10px; /* To ensure content isn't hidden behind the fixed UploadForm */
+  /* height: 10%; */
+  overflow-y: auto;
+}
+.app-container {
+  display: flex;
+  padding: 10px;
+}
+
+.welcomeContainer {
+  text-align: center;
+  padding-top: 70px;
+}
+.welcomeContainer img {
+  text-align: center;
+  padding-top: 70px;
+  filter: grayscale(80%);
+}
+
+.welcome {
+  padding-top: 50px;
+}
+.welcome h1 {
+  color: rgb(196, 194, 194);
+  font-size: 25px;
+  font-weight: 600;
+
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "wdth" 100;
+  margin-bottom: 50px;
+}
+
+.content {
+  flex-grow: 1;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(28, 28, 28) !important;
+}
