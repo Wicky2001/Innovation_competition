@@ -4,12 +4,14 @@ import ChatHistory from "../ChatHistory";
 import { handleSubmit } from "../../functions/fileUpload";
 import NavBar from "../NavBar";
 import logo from '../Assects/logo.png'
+import socket from "../../functions/socket"; // Import the shared socket instance
+
 
 import UploadForm from "../UploadForm";
 
 import "./Desktop.css";
 import SideBar from "../SideBar";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 
 const Desktop = ({ clientId }) => {
 
@@ -20,7 +22,36 @@ const Desktop = ({ clientId }) => {
  const  handleSideBar=()=>{
     console.log("clicked");
     setSideBarVisible(!sideBarVisible);
+    console.log(historyData)
   }
+  function removeDuplicates(array, key) {
+    const unique = new Map();
+    array.forEach((item) => {
+      if (!unique.has(item[key])) {
+        unique.set(item[key], item);
+      }
+    });
+    return Array.from(unique.values());
+  }
+  
+  useEffect(() => {
+    // Handler function for data event
+    const handleData = (data) => {
+      console.log("kkkkkkkkkkkkkkk")
+      setHistoryData((prevHistoryData) => {
+        const updatedHistoryData = [...prevHistoryData, data];
+        return removeDuplicates(updatedHistoryData, "chatId"); // Adjust the key as per your data structure
+      });
+    };
+
+    // Listen for 'data' event from server
+    socket.on("data", handleData);
+
+    // Clean up on unmount
+    return () => {
+      socket.off("data", handleData);
+    };
+  }, []);
 
   return (
     <div className={(sideBarVisible)? "app-container":""}>
@@ -33,7 +64,7 @@ const Desktop = ({ clientId }) => {
             </div>
             <div className="main-content">
             {historyData.length > 0 ? (
-                <ChatHistory clientId={clientId} historyData={historyData} setHistoryData={setHistoryData} />
+                <ChatHistory clientId={clientId} historyData={historyData} />
               ) : (
                 <div className="welcomeContainer">
                     <img src={logo} alt="Logo" className="logo" />
