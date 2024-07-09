@@ -37,7 +37,7 @@ const Desktop = ({ clientId }) => {
   useEffect(() => {
     // Handler function for data event
     const handleData = (data) => {
-      console.log("kkkkkkkkkkkkkkk")
+      
       setHistoryData((prevHistoryData) => {
         const updatedHistoryData = [...prevHistoryData, data];
         return removeDuplicates(updatedHistoryData, "chatId"); // Adjust the key as per your data structure
