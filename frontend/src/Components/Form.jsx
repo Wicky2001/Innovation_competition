@@ -10,7 +10,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
-
+import axios from "axios";
+axios.defaults.withCredentials = true;
 function Form({ registerStatus }) {
   const {
     register,
@@ -19,7 +20,18 @@ function Form({ registerStatus }) {
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
+    if (registerStatus) {
+      axios.post("http://localhost:5001/register", data).then((response) => {
+        console.log(
+          "register request response = " + response.data.statusMessage
+        );
+      });
+    } else {
+      console.log(data);
+      axios.post("http://localhost:5001/login", data).then((response) => {
+        console.log("Login request response = " + response.data.statusMessage);
+      });
+    }
   };
 
   return (

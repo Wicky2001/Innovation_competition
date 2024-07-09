@@ -1,24 +1,73 @@
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const cors = require("cors");
-const multer = require("multer");
-const archiver = require("archiver");
-const { spawn } = require("child_process");
-const path = require("path");
-const fs = require("fs");
-const fsPromises = fs.promises;
+import express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import cors from "cors";
+import multer from "multer";
+import archiver from "archiver";
+import { spawn } from "child_process";
+import path from "path";
+import fs from "fs";
+import { promises as fsPromises } from "fs";
+import bodyParser from "body-parser";
+import pg from "pg";
+import bcrypt from "bcrypt";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import session from "express-session";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
+const saltRounds = 10;
 const server = http.createServer(app);
 const io = new Server(server);
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Replace with your frontend's origin
+    credentials: true, // Allow credentials to be sent
+  })
+);
+app.use(
+  session({
+    secret: "TOPSECRETWORD",
+    resave: false,
+    saveUninitialized: true, //do not save session id who have no data
+    cookie: { secure: false, sameSite: "None" },
+  })
+);
+app.use(bodyParser.urlencoded({ extended: true }));
 
-const corsOptions = {
-  origin: "*", // Change to specific origins as needed
-  methods: ["GET", "POST"],
+app.use(passport.initialize());
+app.use(passport.session());
+
+const db = new pg.Client({
+  user: "postgres",
+  host: "localhost",
+  database: "grading_ai",
+  password: "20011103",
+  port: 5432,
+});
+
+const connectToDatabase = async () => {
+  try {
+    const result = await db.connect();
+    console.log("Successfully connected to the database");
+  } catch (error) {
+    console.log("error occur when connecting database" + error);
+  }
 };
 
-app.use(cors(corsOptions));
+connectToDatabase();
+// const corsOptions = {
+//   origin: "*", // Change to specific origins as needed
+//   methods: ["GET", "POST"],
+// };
+
+// app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -229,7 +278,9 @@ const createZip = (clientId) => {
       chatId: chatDirectoryName,
       processComplete: true,
     };
-    connectedClients[clientId].emit("data", dataForFrontEnd); // sending location of the zip file to frontend
+    connectedClients[clientId].emit("data", dataForFrontEnd);
+    console.log(dataForFrontEnd);
+    // sending location of the zip file to frontend
   });
 
   archive.on("error", (err) => {
@@ -295,7 +346,128 @@ io.on("connection", (socket) => {
     }
   });
 });
+//--------------------------------------------------------------------------------------------
 
+const authenticateObject = { authenticate: null, statusMessage: null };
+
+app.post("/register", async (req, res) => {
+  const name = req.body.name;
+  const email = req.body.email;
+  const password = req.body.password;
+
+  try {
+    const checkResult = await db.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+
+    if (checkResult.rows.length > 0) {
+      // req.redirect("/login"); //need to modify
+      authenticateObject.statusMessage = "you need to log in";
+      authenticateObject.authenticate = false;
+      res.json(authenticateObject);
+    } else {
+      bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if (err) {
+          console.error("Error hashing password:", err);
+        } else {
+          try {
+            const result = await db.query(
+              "INSERT INTO users (email,name, password) VALUES ($1, $2,$3) RETURNING *",
+              [email, name, hash]
+            );
+            console.log("success fully insert user to db");
+            const user = result.rows[0];
+
+            req.login(user, (err) => {
+              console.log("passport error occur login user" + err);
+            });
+            authenticateObject.statusMessage = "you are authenticated";
+            authenticateObject.authenticate = true;
+            res.json(authenticateObject);
+          } catch (error) {
+            console.log("error ocuuer when inserting user into db" + error);
+          }
+        }
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      authenticateObject.statusMessage =
+        "An error occurred during authentication.";
+      authenticateObject.authenticate = false;
+      return res.json(authenticateObject);
+    }
+
+    if (!user) {
+      authenticateObject.statusMessage = info
+        ? info.message
+        : "Invalid credentials";
+      authenticateObject.authenticate = false;
+      return res.json(authenticateObject);
+    }
+
+    req.login(user, (err) => {
+      if (err) {
+        authenticateObject.statusMessage =
+          "An error occurred while logging in.";
+        authenticateObject.authenticate = false;
+        return res.json(authenticateObject);
+      }
+
+      authenticateObject.statusMessage = "Login successful";
+      authenticateObject.authenticate = true;
+      return res.status(200).json(authenticateObject);
+    });
+  })(req, res, next);
+});
+passport.use(
+  new Strategy(
+    { usernameField: "email", passwordField: "password" }, // Specify the field names used in your request
+    async function verify(email, password, cb) {
+      try {
+        console.log("email = " + email);
+        const result = await db.query("SELECT * FROM users WHERE email = $1", [
+          email,
+        ]);
+        if (result.rows.length > 0) {
+          const user = result.rows[0];
+          const storedHashedPassword = user.password;
+          bcrypt.compare(password, storedHashedPassword, (err, valid) => {
+            if (err) {
+              console.error("Error comparing passwords:", err);
+              return cb(err);
+            } else {
+              if (valid) {
+                return cb(null, user);
+              } else {
+                return cb(null, false, { message: "Incorrect password." });
+              }
+            }
+          });
+        } else {
+          return cb(null, false, {
+            message: "User not found. Please register.",
+          });
+        }
+      } catch (err) {
+        console.log("Database error:", err);
+        return cb(err);
+      }
+    }
+  )
+);
+
+passport.serializeUser((user, cb) => {
+  cb(null, user);
+});
+passport.deserializeUser((user, cb) => {
+  cb(null, user);
+});
 const PORT = 5001;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
