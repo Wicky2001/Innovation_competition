@@ -4,34 +4,8 @@ import downloadZipFile from "../functions/handleDownload";
 import { BsFileEarmarkZip } from "react-icons/bs";
 
 
-function ChatHistory({ clientId, historyData, setHistoryData }) {
-function removeDuplicates(array, key) {
-    const unique = new Map();
-    array.forEach((item) => {
-      if (!unique.has(item[key])) {
-        unique.set(item[key], item);
-      }
-    });
-    return Array.from(unique.values());
-  }
+function ChatHistory({ clientId, historyData }) {
 
-  useEffect(() => {
-    // Handler function for data event
-    const handleData = (data) => {
-      setHistoryData((prevHistoryData) => {
-        const updatedHistoryData = [...prevHistoryData, data];
-        return removeDuplicates(updatedHistoryData, "chatId"); // Adjust the key as per your data structure
-      });
-    };
-
-    // Listen for 'data' event from server
-    socket.on("data", handleData);
-
-    // Clean up on unmount
-    return () => {
-      socket.off("data", handleData);
-    };
-  }, []);
   return (
     <div
       className="tableContainer"

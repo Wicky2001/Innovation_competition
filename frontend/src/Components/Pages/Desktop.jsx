@@ -9,7 +9,7 @@ import UploadForm from "../UploadForm";
 
 import "./Desktop.css";
 import SideBar from "../SideBar";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import "./Desktop.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -21,6 +21,8 @@ const Desktop = ({ clientId }) => {
     console.log("clicked");
     setSideBarVisible(!sideBarVisible);
   };
+
+  
   function removeDuplicates(array, key) {
     const unique = new Map();
     array.forEach((item) => {
@@ -80,7 +82,10 @@ const Desktop = ({ clientId }) => {
             </div>
           )}
         </div>
+        <div className="formContainer">
         <UploadForm clientId={clientId} handleSubmit={handleSubmit} />
+        </div>
+        
       </div>
     </div>
   );
