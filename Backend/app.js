@@ -164,7 +164,7 @@ function processFiles(dirForProcess, chatDirectoryName, clientId) {
       }
     );
 
-    let resultData = "";
+  
 
     let errorData = "";
 
