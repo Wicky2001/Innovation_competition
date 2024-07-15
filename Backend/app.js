@@ -213,7 +213,8 @@ function processFiles(dirForProcess, chatDirectoryName, clientId) {
       }
     );
 
-    let resultData = "";
+  
+
     let errorData = "";
 
     pythonProcess.stdout.on("data", (data) => {
@@ -239,7 +240,7 @@ function processFiles(dirForProcess, chatDirectoryName, clientId) {
         reports_location = jsonData.reports_location;
         if (jsonData.status === "success") {
           try {
-            createZip(clientId);
+            createZip(clientId,reports_location);
           } catch (error) {
             console.error("Error creating zip:", error);
           }
@@ -262,7 +263,7 @@ function processFiles(dirForProcess, chatDirectoryName, clientId) {
   });
 }
 
-const createZip = (clientId) => {
+const createZip = (clientId,reports_location) => {
   const zipFilename = "results.zip";
   const zipPath = path.join(reports_location, zipFilename);
   const output = fs.createWriteStream(zipPath);

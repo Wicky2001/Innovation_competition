@@ -2,22 +2,29 @@
 
 .main-content {
   margin-bottom: 10px; /* To ensure content isn't hidden behind the fixed UploadForm */
-  /* height: 10%; */
   overflow-y: auto;
+  height: 65vh;
+  
 }
 .app-container {
   display: flex;
-  padding: 10px;
+ 
 }
 
 .welcomeContainer {
-  text-align: center;
+
   padding-top: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction:column;
 }
 .welcomeContainer img {
-  text-align: center;
+ 
   padding-top: 70px;
+
   filter: grayscale(80%);
+  
 }
 
 .welcome {
@@ -38,6 +45,10 @@
   flex-grow: 1;
 }
 
+.formContainer{
+
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -47,3 +58,4 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: rgb(28, 28, 28) !important;
 }
+
