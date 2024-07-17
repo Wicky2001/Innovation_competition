@@ -1,0 +1,140 @@
+.App {
+    text-align: center;
+  }
+  
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
+  }
+  
+  .App-header {
+    background-color: #222;
+    height: 150px;
+    padding: 20px;
+    color: white;
+  }
+  
+  .App-intro {
+    font-size: large;
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+  
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .click-to-upload-or-drop-answer-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--padding-12xs) 0 0;
+  }
+  
+  .upload-container {
+    /* position: fixed;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%); */
+    padding-top: 2px;
+    border: solid 1px #6e6b6b;
+    border-radius: 10px;
+    background-color: #282727;
+    z-index: 1000;
+  }
+  
+  .col {
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    flex-direction: column; /* Stack elements vertically */
+  }
+  
+  .file-upload-wrapper {
+    margin-bottom: 10px; /* Add some spacing between the file input and text input */
+  }
+  
+  .file-label {
+    cursor: pointer;
+    font-size: 24px; /* Adjust size as needed */
+  }
+  
+  .upload-button {
+    background-color: rgba(255, 253, 253, 0);
+    border: none;
+    cursor: pointer;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+   
+   
+  }
+
+  /* .spinner_container{
+    background-color: rgba(255, 253, 253, 0);
+    border: none;
+    cursor: pointer;
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+  } */
+
+  
+  
+  .upload-button:hover{
+    background-color: #e0dddd14;
+  }
+  
+  .upload-button-container{
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 5px;
+   
+  }
+  
+  
+  
+  input.form-control:focus {
+    box-shadow: none; /* White glow */
+    border: solid 1px #989494; /* Optional: change the border color */
+    background-color: rgba(75, 74, 73, 0.265);
+    color: rgb(188, 184, 184);
+    
+}
+  
+  input.form-control {
+    box-shadow: none; /* White glow */
+    border: solid 1px #6e6b6b;/* Optional: change the border color */
+    background-color: rgba(75, 74, 73, 0.265);
+    color: rgb(188, 184, 184);
+    box-shadow: none;
+    width: 90%;
+}
+  
+
+  input.form-control::placeholder {
+    color: rgb(188, 184, 184);
+  }
+
+  input.form-control:disabled {
+    box-shadow: none; /* White glow */
+    border: solid 1px #000000; /* Optional: change the border color */
+    background-color: rgba(16, 16, 16, 0.265);
+    color: rgb(0, 0, 0);
+    
+}
+  

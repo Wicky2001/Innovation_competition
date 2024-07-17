@@ -1,0 +1,33 @@
+.chatItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .chatName button {
+    background: none;
+    border: none;
+    color: #cee2f8;
+    
+    cursor: pointer;
+    
+  }
+  
+  .chatName button:hover {
+    text-decoration: underline;
+    color: #38a891;
+  }
+  
+  .delChat button {
+    background: none;
+    border: none;
+    color: #ff0000;
+    cursor: pointer;
+  }
+  
+  .delChat button:hover {
+    color: #a51919;
+  }
+  

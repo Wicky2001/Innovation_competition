@@ -1,0 +1,24 @@
+.chatCard{
+
+    width: 20%;
+    padding: 20px;
+    background-color: rgb(68, 68, 68);
+    border-radius: 10%;
+
+}
+.chatCard :hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.icon{
+    width:100%;
+    font-size:35px;
+    color:rgb(178, 173, 173);
+    
+}
+.title{
+    font-size:18px;
+    color:white;
+    text-align: center;
+}

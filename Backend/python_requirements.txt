@@ -1,0 +1,7 @@
+reportlab
+glob2
+opencv-python
+numpy
+reportlab
+google-cloud-vision
+pdf2image
