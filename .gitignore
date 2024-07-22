@@ -10,7 +10,7 @@ Backend/REPORTS
 Backend/Model/.idea
 Backend/Model/node_modules
 node_modules
-
+Model/models/marks_giving_model_weights.pt
 
 
 # Byte-compiled / optimized / DLL files

@@ -1,15 +1,17 @@
 from groq import Groq
+from .marks_giving_model import get_marks
 
 
 # dummies
-def get_marks_for_answers(answer):
+def get_marks_for_answers(answer,marks_model):
     """
                input type:
                     answer : String
                return:
                     marks: int
                """
-    return 3
+
+    return get_marks(answer,marks_model)
 
 
 def get_feedback_for_answer(question, answer, marks, vector_db):
@@ -84,7 +86,7 @@ def get_feedback_for_answer(question, answer, marks, vector_db):
     return response_text
 
 
-def give_marks_for_descriptive_answers(pdf_list_with_answers_questions):
+def give_marks_for_descriptive_answers(pdf_list_with_answers_questions, marks_model):
     """
            input type:
                 A List containing below type of objects
@@ -110,7 +112,7 @@ def give_marks_for_descriptive_answers(pdf_list_with_answers_questions):
         answers = pdf["answers"]
         marks = []
         for answer in answers:
-            marks_for_answer = get_marks_for_answers(answer)
+            marks_for_answer = get_marks_for_answers(answer,marks_model)
             marks.append(marks_for_answer)
         pdf["marks"] = marks
     return pdf_list_with_answers_questions

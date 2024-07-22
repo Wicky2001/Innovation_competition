@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-
+from tempData import pdf_list_with_pdf_name_and_pdf_text
 # main.py
 
 from models import give_marks_for_descriptive_answers, give_feed_back_for_answers, create_raw_knowledge_base, \
@@ -49,35 +49,10 @@ if __name__ == "__main__":
     # list_of_pdf = convert_pdf_to_images(studentAnswersContainerPath)
     # pdf_list_with_pdf_name_and_pdf_text = get_text_from_pdf(list_of_pdf)
 
-    pdf_list_with_pdf_name_and_pdf_text = [{'pdf_name': 'CS_2020_035',
-                                            'pdf_text': "University Of Kelaniye Mid-term test[1.What are the "
-                                                        "four pillars of Java?]{Encapsulation: Bundling data "
-                                                        "and methods together to control access.Inheritance: "
-                                                        "Creating new classes (subclasses) based on existing ones "
-                                                        "(superclasses) to reusecode.Polymorphism: Allowing objects "
-                                                        "of different classes to respond to the same method call"
-                                                        " indifferent ways.Abstraction: Focusing on essential "
-                                                        "details and hiding implementation specifics.}[2. "
-                                                        "Shortly describe routing in networking.]{routing is the process of selecting the best path for data packets "
-                                                        "to travel from their sourceto their destination across interconnected net"
-                                                        "works. It's like a traffic controller for data,directing packets e"
-                                                        "fficiently to their final point.}"},
-                                           {'pdf_name': 'paper_sample_2',
-                                            'pdf_text': "University Of KelaniyeMid-term test[1.What are the "
-                                                        "four pillars of Java?]{Encapsulation: Bundling data "
-                                                        "and methods together to control access.Inheritance: "
-                                                        "Creating new classes (subclasses) based on existing ones "
-                                                        "(superclasses) to reusecode.Polymorphism: Allowing objects "
-                                                        "of different classes to respond to the same method call"
-                                                        " indifferent ways.Abstraction: Focusing on essential "
-                                                        "details and hiding implementation specifics.}[2. "
-                                                        "Shortly describe routing in networking.]{routing is the process of selecting the best path for data packets "
-                                                        "to travel from their sourceto their destination across interconnected net"
-                                                        "works. It's like a traffic controller for data,directing packets e"
-                                                        "fficiently to their final point.}"}]
+
 
     knowledege_base = create_raw_knowledge_base(
-        r"C:\Users\Wicky\Documents\Innovation_competition-main\Storage\PDF\chat_1721065237715\markingScheme")
+        markingSchemeContainerPath)
     # print("knowledge base = ", knowledege_base)
     splited_knowledege_base = split_knowledge_base(512, knowledege_base)
     # print("spitted = ", splited_knowledege_base)
@@ -96,7 +71,7 @@ if __name__ == "__main__":
     }
 
     # Print JSON response to standard output
-    print(json.dumps(response_data))
+    (json.dumps(response_data))
 
     # print(json.dumps(result))  # convert to json
     # sys.stdout.flush()
