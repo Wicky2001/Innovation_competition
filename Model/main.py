@@ -29,11 +29,11 @@ if __name__ == "__main__":
     # else:
     # these two file paths are temporary placeholders
     chatDirectoryName = 'chat_1718948513306'
-    chatDirectoryPath = r'C:\Users\Wicky\Documents\Innovation_competition-main\Backend\PDF\chat_1721065237715'
+    chatDirectoryPath = r'C:\Users\Wicky\Documents\Innovation_competition-main\Storage\PDF\chat_1721065237715'
     # print("shape of sys.argv = ",sys.argv)
     # chatDirectoryPath = sys.argv[1]
     # chatDirectoryName = sys.argv[2]
-    baseDirectoryForReports = r'C:\Users\Wicky\Documents\Innovation_competition-main\Backend\REPORTS'
+    baseDirectoryForReports = r'C:\Users\Wicky\Documents\Innovation_competition-main\Storage\REPORTS'
 
     markingSchemeContainerName = 'markingScheme'
     studentAnswersContainerName = 'studentAnswers'
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # pdf_list_with_pdf_name_and_pdf_text = get_text_from_pdf(list_of_pdf)
 
     pdf_list_with_pdf_name_and_pdf_text = [{'pdf_name': 'CS_2020_035',
-                                            'pdf_text': "University Of KelaniyeMid-term test[1.What are the "
+                                            'pdf_text': "University Of Kelaniye Mid-term test[1.What are the "
                                                         "four pillars of Java?]{Encapsulation: Bundling data "
                                                         "and methods together to control access.Inheritance: "
                                                         "Creating new classes (subclasses) based on existing ones "
@@ -77,7 +77,7 @@ if __name__ == "__main__":
                                                         "fficiently to their final point.}"}]
 
     knowledege_base = create_raw_knowledge_base(
-        r"C:\Users\Wicky\Documents\Innovation_competition-main\Backend\PDF\chat_1721065237715\markingScheme")
+        r"C:\Users\Wicky\Documents\Innovation_competition-main\Storage\PDF\chat_1721065237715\markingScheme")
     # print("knowledge base = ", knowledege_base)
     splited_knowledege_base = split_knowledge_base(512, knowledege_base)
     # print("spitted = ", splited_knowledege_base)
