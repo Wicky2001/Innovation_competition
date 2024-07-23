@@ -36,7 +36,11 @@ app.use(
     secret: "TOPSECRETWORD",
     resave: false,
     saveUninitialized: true, //do not save session id who have no data
-    cookie: { secure: false, sameSite: "None" },
+    cookie: {
+      secure: false, // Set to true if using HTTPS
+      sameSite: "None",
+      httpOnly: true, // Add HttpOnly flag
+    },
   })
 );
 app.use(bodyParser.urlencoded({ extended: true }));
