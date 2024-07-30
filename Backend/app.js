@@ -27,7 +27,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 app.use(
   cors({
-    origin: "http://localhost:3000", // Replace with your frontend's origin
+    origin: "http://localhost:3000", // Replace with  frontend's origin
     credentials: true, // Allow credentials to be sent
   })
 );
@@ -116,11 +116,16 @@ const storage = multer.diskStorage({
     }
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
+    if (file.fieldname === "markingSchemeFiles") {
+      // Use original name for marking scheme files
+      cb(null, file.originalname);
+    } else if (file.fieldname === "answerSheetFiles") {
+      // Append unique suffix for answer sheet files
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    } else {
+      cb(new Error('Unexpected file fieldname'));
+    }
   },
 });
 
@@ -287,19 +292,32 @@ const createZip = (clientId, reports_location) => {
   archive.directory(reports_location, false);
   archive.finalize();
 
-  output.on("finish", () => {
-    const dataForFrontEnd = {
-      zipFilePath: zipPath,
-      chatId: chatDirectoryName,
-      processComplete: true,
-    };
-    connectedClients[clientId].emit("data", dataForFrontEnd);
-    console.log(dataForFrontEnd);
-    // sending location of the zip file to frontend
-  });
+  markingSchemeDirectoryPath=path.join(chatDirectoryPath,chatDirectoryName,"markingScheme")
 
-  archive.on("error", (err) => {
-    console.error("Archiving error:", err);
+  fs.readdir(markingSchemeDirectoryPath, (err, files) => {
+    if (err) {
+      console.error('Error reading markingScheme directory:', err);
+      return;
+    }
+
+    // Assuming there's exactly one file, assign its name to chatId
+    const markingSchemeFile = files[0];
+    const chatId = markingSchemeFile; // Assign the file name to chatId
+
+    output.on("finish", () => {
+      const dataForFrontEnd = {
+        zipFilePath: zipPath,
+        chatId: chatId, // Assign chatId here
+        processComplete: true,
+      };
+      connectedClients[clientId].emit("data", dataForFrontEnd);
+      console.log(dataForFrontEnd);
+      // sending location of the zip file to frontend
+    });
+
+    archive.on("error", (err) => {
+      console.error("Archiving error:", err);
+    });
   });
 };
 
@@ -341,6 +359,7 @@ app.get("/download-results", (req, res) => {
   });
 });
 
+
 io.on("connection", (socket) => {
   console.log("A client connected:", socket.id);
 
@@ -365,6 +384,26 @@ io.on("connection", (socket) => {
 
 const authenticateObject = { authenticate: null, statusMessage: null };
 
+app.get("/isAuthenticated",(req,res)=>{
+ 
+  if(req.isAuthenticated()){
+    //req.isAuthenticated() will return true if user is logged in
+    console.log("lllllllllllllaaaaaaaaaaaaaaaa")
+    authenticateObject.authenticate=true;
+    authenticateObject.statusMessage="you got permission"
+    res.json(authenticateObject);
+
+    
+} else{
+   authenticateObject.authenticate=false;
+    authenticateObject.statusMessage="you have no permission"
+    res.json(authenticateObject);
+}
+
+})
+
+
+
 app.post("/register", async (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
@@ -376,9 +415,10 @@ app.post("/register", async (req, res) => {
     ]);
 
     if (checkResult.rows.length > 0) {
-      // req.redirect("/login"); //need to modify
+    
       authenticateObject.statusMessage = "you need to log in";
       authenticateObject.authenticate = false;
+      console.log("You neeed to log in");
       res.json(authenticateObject);
     } else {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
@@ -394,7 +434,7 @@ app.post("/register", async (req, res) => {
             const user = result.rows[0];
 
             req.login(user, (err) => {
-              console.log("passport error occur login user" + err);
+              console.log("passport error occur login user " + err);
             });
             authenticateObject.statusMessage = "you are authenticated";
             authenticateObject.authenticate = true;
@@ -449,6 +489,9 @@ passport.use(
         const result = await db.query("SELECT * FROM users WHERE email = $1", [
           email,
         ]);
+
+       
+        
         if (result.rows.length > 0) {
           const user = result.rows[0];
           const storedHashedPassword = user.password;
@@ -476,6 +519,8 @@ passport.use(
     }
   )
 );
+
+
 
 passport.serializeUser((user, cb) => {
   cb(null, user);

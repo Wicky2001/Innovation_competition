@@ -4,6 +4,10 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Desktop from "./Components/Pages/Desktop";
 import LoginPage from "./Components/Pages/LoginPage";
 import socket from "./functions/socket";
+import PrivateRoute from "./Authentication/PrivateRoute";
+import { AuthProvider } from './Authentication/AuthProvider';
+
+
 const { v4: uuidv4 } = require("uuid");
 
 const App = () => {
@@ -46,12 +50,19 @@ const App = () => {
 
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/chat" element={<Desktop clientId={clientId} />} />
-        </Routes>
+       <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/chat" element={
+              <PrivateRoute>
+                <Desktop clientId={clientId} />
+              </PrivateRoute>
+            } />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
+   
     </>
   );
 };

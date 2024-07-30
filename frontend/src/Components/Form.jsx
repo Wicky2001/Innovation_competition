@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { useForm } from "react-hook-form";
 import {
   VStack,
@@ -11,26 +11,37 @@ import {
 } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 import axios from "axios";
+
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../Authentication/AuthProvider";
+
+
 axios.defaults.withCredentials = true;
-function Form({ registerStatus }) {
+function Form() {
+
+  const [message,setMessage]=useState("")
+
+
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+    const {authenticateObject,loginAction,registerAction,register:registerStatus,setRegister:setRegistration}=useAuth()
+
   const onSubmit = (data) => {
+
+   
+
     if (registerStatus) {
-      axios.post("http://localhost:5001/register", data).then((response) => {
-        console.log(
-          "register request response = " + response.data.statusMessage
-        );
-      });
+
+      registerAction(data)
     } else {
-      console.log(data);
-      axios.post("http://localhost:5001/login", data).then((response) => {
-        console.log("Login request response = " + response.data.statusMessage);
-      });
+   
+      loginAction(data)
+      
     }
   };
 
@@ -97,6 +108,7 @@ function Form({ registerStatus }) {
               </Text>
             )}
           </FormControl>
+          <Text color="red.500" margin={0} fontSize={"14px"}>{message}</Text>
           <Divider borderColor="gray.400" />
           <Button
             leftIcon={<FcGoogle size={"25px"}></FcGoogle>}

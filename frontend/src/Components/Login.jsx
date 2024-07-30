@@ -15,9 +15,13 @@ import {
 
 import logo from "./Assects/logo.png";
 import { useState } from "react";
+import { useAuth } from "../Authentication/AuthProvider";
+
 
 function Login() {
-  const [register, setRegister] = useState(false);
+  const { register,setRegister } = useAuth();
+
+
   return (
     <Flex direction="column" align="center" justify="center" height="100vh">
       <Container centerContent maxW="450px">
@@ -43,7 +47,7 @@ function Login() {
             </Text>
           </CardHeader>
           <CardBody paddingTop={6}>
-            <Form registerStatus={register}></Form>
+            <Form></Form>
           </CardBody>
           <CardFooter paddingY={0}>
             <Text fontSize={"13px"}>
@@ -54,6 +58,14 @@ function Login() {
                 color={"green"}
                 onClick={() => {
                   setRegister(!register);
+                  // if(register){
+                  //   setNewUser()
+                  //   registration(newUser)
+                  // } 
+                  // else{
+                  //   setUser()
+                  //   loginAction(user)
+                  // }
                 }}
               >
                 {register ? "Sign in" : "Sign up"}
