@@ -16,15 +16,19 @@ import { Strategy } from "passport-local";
 import session from "express-session";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
+import axios from "axios";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 // Load environment variables from .env file
 dotenv.config();
 
 const app = express();
+app.use(passport.initialize());
 const saltRounds = 10;
 const server = http.createServer(app);
 const io = new Server(server);
+
 app.use(
   cors({
     origin: "http://localhost:3000", // Replace with  frontend's origin
@@ -37,16 +41,16 @@ app.use(
     resave: false,
     saveUninitialized: true, //do not save session id who have no data
     cookie: {
-      secure: false, // Set to true if using HTTPS
-      sameSite: "None",
-      httpOnly: true, // Add HttpOnly flag
+      httpOnly: true,
+      sameSite: "Lax", // Add HttpOnly flag
+      secure: false,
     },
   })
 );
-app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const db = new pg.Client({
   user: "postgres",
@@ -75,13 +79,14 @@ connectToDatabase();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const baseDirectory = "./PDF/";
+const baseDirectory = "../Storage/PDF/";
 let connectedClients = {}; // Store connected clients
 
 let chatDirectoryPath;
 let chatDirectoryName;
 let reports_location;
 let zipFilePath = null;
+let chatId = 1;
 
 // Custom middleware to create directories and set destination directory for multer
 async function createInnerDirectoriesMiddleware(req, res, next) {
@@ -121,10 +126,13 @@ const storage = multer.diskStorage({
       cb(null, file.originalname);
     } else if (file.fieldname === "answerSheetFiles") {
       // Append unique suffix for answer sheet files
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      cb(
+        null,
+        file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+      );
     } else {
-      cb(new Error('Unexpected file fieldname'));
+      cb(new Error("Unexpected file fieldname"));
     }
   },
 });
@@ -208,78 +216,22 @@ async function fileUpload(req, res) {
   }
 }
 
-function processFiles(dirForProcess, chatDirectoryName, clientId) {
-  return new Promise((resolve, reject) => {
-    // Path to the Python executable in your virtual environment
-    const pythonPath = path.join(
-      "C:\\Users\\Wicky\\Documents\\Innovation_competition-main\\Backend\\venv\\Scripts\\python.exe"
-    );
+//send paperlocation to backend for processing
+async function processFiles(dirForProcess, chatDirectoryName, clientId) {
+  axios
+    .post("http://127.0.0.1:5000/createReports", {
+      chatDirectoryName: chatDirectoryName,
+      chatDirectoryPath: dirForProcess,
+    })
+    .then((response) => {
+      console.log(response.data);
+      reports_location = response.data.reports_location;
 
-    // Path to your Python script
-    const scriptPath = path.join(
-      "C:\\Users\\Wicky\\Documents\\Innovation_competition-main\\Backend\\Model\\main.py"
-    );
-
-    // Spawn the Python process
-    const pythonProcess = spawn(
-      pythonPath,
-      ["-m", "Backend.Model.main", dirForProcess, chatDirectoryName],
-      {
-        cwd: path.dirname(scriptPath), // Set the working directory to where the script is located
-        env: {
-          ...process.env,
-          PYTHONPATH:
-            "C:\\Users\\Wicky\\Documents\\Innovation_competition-main", // Set PYTHONPATH to your project directory
-        },
-      }
-    );
-
-    let errorData = "";
-    let resultData = "";
-    pythonProcess.stdout.on("data", (data) => {
-      resultData += data.toString();
+      createZip(clientId, reports_location);
+    })
+    .catch((error) => {
+      console.error(error);
     });
-
-    pythonProcess.stderr.on("data", (data) => {
-      errorData += data.toString();
-    });
-
-    pythonProcess.on("close", (code) => {
-      if (code !== 0) {
-        reject(
-          new Error(
-            `Python process exited with code ${code}. Error: ${errorData}`
-          )
-        );
-        return;
-      }
-
-      try {
-        const jsonData = JSON.parse(resultData);
-        reports_location = jsonData.reports_location;
-        if (jsonData.status === "success") {
-          try {
-            createZip(clientId, reports_location);
-          } catch (error) {
-            console.error("Error creating zip:", error);
-          }
-        } else {
-          console.error("Creating reports was not successful");
-        }
-        resolve(jsonData);
-      } catch (error) {
-        reject(
-          new Error(
-            `Error parsing JSON data received from Python script: ${error}`
-          )
-        );
-      }
-    });
-
-    pythonProcess.on("error", (error) => {
-      reject(new Error(`Error spawning Python process: ${error.message}`));
-    });
-  });
 }
 
 const createZip = (clientId, reports_location) => {
@@ -292,32 +244,20 @@ const createZip = (clientId, reports_location) => {
   archive.directory(reports_location, false);
   archive.finalize();
 
-  markingSchemeDirectoryPath=path.join(chatDirectoryPath,chatDirectoryName,"markingScheme")
+  output.on("finish", () => {
+    const dataForFrontEnd = {
+      zipFilePath: zipPath,
+      chatId: "chat " + chatId, // Assign chatId here
+      processComplete: true,
+    };
+    connectedClients[clientId].emit("data", dataForFrontEnd);
+    console.log(dataForFrontEnd);
+    chatId++;
+    // sending location of the zip file to frontend
+  });
 
-  fs.readdir(markingSchemeDirectoryPath, (err, files) => {
-    if (err) {
-      console.error('Error reading markingScheme directory:', err);
-      return;
-    }
-
-    // Assuming there's exactly one file, assign its name to chatId
-    const markingSchemeFile = files[0];
-    const chatId = markingSchemeFile; // Assign the file name to chatId
-
-    output.on("finish", () => {
-      const dataForFrontEnd = {
-        zipFilePath: zipPath,
-        chatId: chatId, // Assign chatId here
-        processComplete: true,
-      };
-      connectedClients[clientId].emit("data", dataForFrontEnd);
-      console.log(dataForFrontEnd);
-      // sending location of the zip file to frontend
-    });
-
-    archive.on("error", (err) => {
-      console.error("Archiving error:", err);
-    });
+  archive.on("error", (err) => {
+    console.error("Archiving error:", err);
   });
 };
 
@@ -359,7 +299,6 @@ app.get("/download-results", (req, res) => {
   });
 });
 
-
 io.on("connection", (socket) => {
   console.log("A client connected:", socket.id);
 
@@ -384,25 +323,19 @@ io.on("connection", (socket) => {
 
 const authenticateObject = { authenticate: null, statusMessage: null };
 
-app.get("/isAuthenticated",(req,res)=>{
- 
-  if(req.isAuthenticated()){
+app.get("/isAuthenticated", (req, res) => {
+  if (req.isAuthenticated()) {
     //req.isAuthenticated() will return true if user is logged in
-    console.log("lllllllllllllaaaaaaaaaaaaaaaa")
-    authenticateObject.authenticate=true;
-    authenticateObject.statusMessage="you got permission"
+    console.log("User is authenticated");
+    authenticateObject.authenticate = true;
+    authenticateObject.statusMessage = "you got permission";
     res.json(authenticateObject);
-
-    
-} else{
-   authenticateObject.authenticate=false;
-    authenticateObject.statusMessage="you have no permission"
+  } else {
+    authenticateObject.authenticate = false;
+    authenticateObject.statusMessage = "you have no permission";
     res.json(authenticateObject);
-}
-
-})
-
-
+  }
+});
 
 app.post("/register", async (req, res) => {
   const name = req.body.name;
@@ -415,7 +348,6 @@ app.post("/register", async (req, res) => {
     ]);
 
     if (checkResult.rows.length > 0) {
-    
       authenticateObject.statusMessage = "you need to log in";
       authenticateObject.authenticate = false;
       console.log("You neeed to log in");
@@ -434,11 +366,17 @@ app.post("/register", async (req, res) => {
             const user = result.rows[0];
 
             req.login(user, (err) => {
-              console.log("passport error occur login user " + err);
+              if (err) {
+                console.error("Passport error during login:", err);
+                return res
+                  .status(500)
+                  .json({ message: "Login failed", error: err });
+              } else {
+                authenticateObject.statusMessage = "You are authenticated";
+                authenticateObject.authenticate = true;
+                return res.json(authenticateObject);
+              }
             });
-            authenticateObject.statusMessage = "you are authenticated";
-            authenticateObject.authenticate = true;
-            res.json(authenticateObject);
           } catch (error) {
             console.log("error ocuuer when inserting user into db" + error);
           }
@@ -490,8 +428,6 @@ passport.use(
           email,
         ]);
 
-       
-        
         if (result.rows.length > 0) {
           const user = result.rows[0];
           const storedHashedPassword = user.password;
@@ -519,8 +455,6 @@ passport.use(
     }
   )
 );
-
-
 
 passport.serializeUser((user, cb) => {
   cb(null, user);

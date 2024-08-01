@@ -5,14 +5,13 @@ import { GrUploadOption } from "react-icons/gr";
 import "./UploadForm.css";
 import socket from "../functions/socket";
 
-
-
-
-
 function UploadForm({ clientId, handleSubmit }) {
   const [markingSchemeFileSelected, setMarkingSchemeFileSelected] =
     useState(false);
   const [answerSheetFileSelected, setAnswerSheetFileSelected] = useState(false);
+  const [answerTextSelected, setAnswerTextSelected] = useState(false);
+  const [markingTextSelected, setMarkingTextSelected] = useState(false);
+
   const [disableTextInput, setDisableTextInput] = useState(false);
   const [disableFileInputs, setDisableFileInputs] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -66,13 +65,15 @@ function UploadForm({ clientId, handleSubmit }) {
                   type="text"
                   disabled={disableTextInput}
                   className="form-control"
-                  id="markingSchemeText"
+                  id="MarkingText"
                   placeholder="Marking Scheme"
                   onChange={(event) => {
                     if (event.target.value.length > 0) {
                       setDisableFileInputs(true);
+                      setMarkingTextSelected(true);
                     } else {
                       setDisableFileInputs(false);
+                      setMarkingTextSelected(false);
                     }
                   }}
                 />
@@ -103,14 +104,16 @@ function UploadForm({ clientId, handleSubmit }) {
                   type="text"
                   disabled={disableTextInput}
                   className="form-control"
-                  id="exampleInputEmail1"
+                  id="AnswerText"
                   aria-describedby="emailHelp"
                   placeholder="Answers"
                   onChange={(event) => {
                     if (event.target.value.length > 0) {
                       setDisableFileInputs(true);
+                      setAnswerTextSelected(true);
                     } else {
                       setDisableFileInputs(false);
+                      setAnswerTextSelected(false);
                     }
                   }}
                 />
@@ -139,10 +142,15 @@ function UploadForm({ clientId, handleSubmit }) {
                       setProcessing(true);
                     }}
                     disabled={
-                      !markingSchemeFileSelected && !answerSheetFileSelected
+                      !(
+                        (markingSchemeFileSelected &&
+                          answerSheetFileSelected) ||
+                        (answerTextSelected && markingTextSelected)
+                      )
                     }
                   >
-                    {markingSchemeFileSelected && answerSheetFileSelected ? (
+                    {(markingSchemeFileSelected && answerSheetFileSelected) ||
+                    (markingTextSelected && answerTextSelected) ? (
                       <GrUploadOption color="green" size={40} />
                     ) : (
                       <GrUploadOption color="red" size={40} />
