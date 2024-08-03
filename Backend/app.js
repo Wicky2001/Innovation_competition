@@ -322,6 +322,7 @@ io.on("connection", (socket) => {
 });
 
 app.post("/upload_text", (req, res) => {
+  const clientId = req.query.clientId;
   let textData = req.body;
   console.log("Text data received = " + JSON.stringify(textData));
 
@@ -330,6 +331,23 @@ app.post("/upload_text", (req, res) => {
     .then((response) => {
       console.log("Response from Flask API:", response.data);
       res.status(200).send(response.data); // Sending the response back to the client
+      try {
+        if (connectedClients[clientId]) {
+          connectedClients[clientId].emit(
+            "TextAnswerprocessingComplete",
+            resultDir
+          );
+        } else {
+          res.status(401).send("Not authorized");
+          return;
+        }
+      } catch (error) {
+        console.error(
+          "Error during during emiting student text prompt",
+          error.message
+        );
+        res.status(500).json({ error: error.message });
+      }
     })
     .catch((error) => {
       console.error("Error sending data to Flask API:", error);
