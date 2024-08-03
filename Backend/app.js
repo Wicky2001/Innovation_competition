@@ -322,6 +322,7 @@ io.on("connection", (socket) => {
 
 app.post("/upload_text", (req, res) => {
   const { answerText, markingText } = req.body;
+  console.log(req.body);
   console.log(answerText, markingText);
 });
 //-----------------------------------------------------------------------------------------

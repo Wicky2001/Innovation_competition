@@ -25,7 +25,7 @@ def hello():
 
 
 @app.route('/createReports', methods=['POST'])
-def submit_data():
+def create_reports():
     data = request.json  # Parse JSON data from the request body
 
     chatDirectoryName = data.get('chatDirectoryName')

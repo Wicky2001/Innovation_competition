@@ -10,20 +10,25 @@ export function handleSubmit(event, clientId) {
     console.log("Marking Text:", markingText);
 
     var textData = { answerText: answerText, markingText: markingText };
+
     fetch(`http://localhost:5001/upload_text`, {
       method: "POST",
-      body: textData,
+      headers: {
+        "Content-Type": "application/json", // Set the content type to JSON
+      },
+      body: JSON.stringify(textData), // Stringify the JSON data
     })
-      .then((response) => response.text())
-      .then((text) => {
-        console.log(text);
-        //   messageDiv.innerText = "Processing...";
+      .then((response) => response.json()) // Assuming the server responds with JSON
+      .then((data) => {
+        console.log(data);
+        // messageDiv.innerText = "Processing...";
       })
       .catch((error) => {
         console.error("Error occurred", error);
-        //   messageDiv.innerText = 'Error occurred while uploading files.';
+        // messageDiv.innerText = 'Error occurred while uploading files.';
       });
   } else {
+    console.log("file upload trigger");
     // Get references to the file input elements and message div
     const markingSchemeFiles = document.getElementById("markingScheme");
     const answerSheetFiles = document.getElementById("answerSheet");
