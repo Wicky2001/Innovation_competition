@@ -4,11 +4,11 @@ import { Server } from "socket.io";
 import cors from "cors";
 import multer from "multer";
 import archiver from "archiver";
-import { spawn } from "child_process";
+import morgan from "morgan";
 import path from "path";
 import fs from "fs";
 import { promises as fsPromises } from "fs";
-import bodyParser from "body-parser";
+import bodyParser, { text } from "body-parser";
 import pg from "pg";
 import bcrypt from "bcrypt";
 import passport from "passport";
@@ -24,6 +24,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const app = express();
+app.use(morgan("dev"));
 app.use(passport.initialize());
 const saltRounds = 10;
 const server = http.createServer(app);
@@ -321,9 +322,12 @@ io.on("connection", (socket) => {
 });
 
 app.post("/upload_text", (req, res) => {
-  const { answerText, markingText } = req.body;
-  console.log(req.body);
+  let textData = req.body;
+  console.log("Text data is received = " + textData);
   console.log(answerText, markingText);
+  axios.post("http://127.0.0.1:5000/markTexts", {
+    textData: textData,
+  });
 });
 //-----------------------------------------------------------------------------------------
 

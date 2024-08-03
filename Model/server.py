@@ -19,9 +19,11 @@ def initialize_model():
     marks_model = load_model()
 
 
-@app.route('/')
-def hello():
-    return 'Hello, World!'
+@app.route('/markTexts')
+def mark_texts():
+    data = request.data
+    print(data)
+
 
 
 @app.route('/createReports', methods=['POST'])
