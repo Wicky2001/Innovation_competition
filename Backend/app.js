@@ -8,7 +8,7 @@ import morgan from "morgan";
 import path from "path";
 import fs from "fs";
 import { promises as fsPromises } from "fs";
-import bodyParser, { text } from "body-parser";
+import bodyParser from "body-parser";
 import pg from "pg";
 import bcrypt from "bcrypt";
 import passport from "passport";
@@ -323,11 +323,18 @@ io.on("connection", (socket) => {
 
 app.post("/upload_text", (req, res) => {
   let textData = req.body;
-  console.log("Text data is received = " + textData);
-  console.log(answerText, markingText);
-  axios.post("http://127.0.0.1:5000/markTexts", {
-    textData: textData,
-  });
+  console.log("Text data received = " + JSON.stringify(textData));
+
+  axios
+    .post("http://127.0.0.1:5000/markTexts", { textData: textData })
+    .then((response) => {
+      console.log("Response from Flask API:", response.data);
+      res.status(200).send(response.data); // Sending the response back to the client
+    })
+    .catch((error) => {
+      console.error("Error sending data to Flask API:", error);
+      res.status(500).send("Error sending data to Flask API");
+    });
 });
 //-----------------------------------------------------------------------------------------
 

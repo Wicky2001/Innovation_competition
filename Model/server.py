@@ -19,10 +19,23 @@ def initialize_model():
     marks_model = load_model()
 
 
-@app.route('/markTexts')
+@app.route('/markTexts', methods=['POST'])
 def mark_texts():
-    data = request.data
-    print(data)
+    try:
+        text_data = request.json.get('textData')
+        if not text_data:
+            return jsonify({"error": "No text data provided"}), 400
+
+        # Process the text_data as needed
+        print("Received text data:", text_data)
+
+        # Mock processing result
+        result = {"status": "success", "message": "Text processed successfully", "data": text_data}
+
+        return jsonify(result), 200
+    except Exception as e:
+        print("Error processing request:", str(e))
+        return jsonify({"error": "Internal server error"}), 500
 
 
 
