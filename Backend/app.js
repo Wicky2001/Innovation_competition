@@ -317,7 +317,7 @@ app.post("/upload_text", (req, res) => {
           chatId: "chat " + chatId, // Assign chatId here
           dataType: "Text",
           processComplete: true,
-          data: response.data,
+          textData: response.data,
         };
 
         if (connectedClients[clientId]) {
