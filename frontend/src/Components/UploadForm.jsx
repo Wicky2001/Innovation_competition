@@ -17,8 +17,12 @@ function UploadForm({ clientId, handleSubmit }) {
   const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
-    socket.on("data", (data) => {
+    socket.on("PDFData", (data) => {
       console.log("Zipping done => ", data.processComplete);
+      setProcessing(!data.processComplete);
+    });
+    socket.on("TextData", (data) => {
+      console.log("TextProcessing Done => ", data.processComplete);
       setProcessing(!data.processComplete);
     });
   }, []);

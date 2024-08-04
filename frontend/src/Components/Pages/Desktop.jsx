@@ -9,7 +9,7 @@ import UploadForm from "../UploadForm";
 
 import "./Desktop.css";
 import SideBar from "../SideBar";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Desktop.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -22,7 +22,6 @@ const Desktop = ({ clientId }) => {
     setSideBarVisible(!sideBarVisible);
   };
 
-  
   function removeDuplicates(array, key) {
     const unique = new Map();
     array.forEach((item) => {
@@ -37,17 +36,20 @@ const Desktop = ({ clientId }) => {
     // Handler function for data event
     const handleData = (data) => {
       setHistoryData((prevHistoryData) => {
+        console.log("received data from front end =>" + data);
         const updatedHistoryData = [...prevHistoryData, data];
         return removeDuplicates(updatedHistoryData, "chatId"); // Adjust the key as per your data structure
       });
     };
 
     // Listen for 'data' event from server
-    socket.on("data", handleData);
+    socket.on("PDFData", handleData);
+    socket.on("TextData", handleData);
 
     // Clean up on unmount
     return () => {
-      socket.off("data", handleData);
+      socket.off("PDFData", handleData);
+      socket.off("TextData", handleData);
     };
   }, []);
 
@@ -83,9 +85,8 @@ const Desktop = ({ clientId }) => {
           )}
         </div>
         <div className="formContainer">
-        <UploadForm clientId={clientId} handleSubmit={handleSubmit} />
+          <UploadForm clientId={clientId} handleSubmit={handleSubmit} />
         </div>
-        
       </div>
     </div>
   );

@@ -247,11 +247,12 @@ const createZip = (clientId, reports_location) => {
 
   output.on("finish", () => {
     const dataForFrontEnd = {
+      dataType: "PDF",
       zipFilePath: zipPath,
       chatId: "chat " + chatId, // Assign chatId here
       processComplete: true,
     };
-    connectedClients[clientId].emit("data", dataForFrontEnd);
+    connectedClients[clientId].emit("PDFData", dataForFrontEnd);
     console.log(dataForFrontEnd);
     chatId++;
     // sending location of the zip file to frontend
@@ -300,6 +301,51 @@ app.get("/download-results", (req, res) => {
   });
 });
 
+app.post("/upload_text", (req, res) => {
+  const clientId = req.query.clientId;
+  console.log("client id = ", clientId);
+  let textData = req.body;
+  console.log("Text data received = " + JSON.stringify(textData));
+
+  axios
+    .post("http://127.0.0.1:5000/markTexts", { textData: textData })
+    .then((response) => {
+      console.log("Response from Flask API:", response.data);
+
+      try {
+        const dataForFrontEnd = {
+          chatId: "chat " + chatId, // Assign chatId here
+          dataType: "Text",
+          processComplete: true,
+          data: response.data,
+        };
+
+        if (connectedClients[clientId]) {
+          // Send text data to the client
+          connectedClients[clientId].emit("TextData", dataForFrontEnd);
+          chatId++;
+          res.status(200).send(response.data); // Sending the response back to the client
+        } else {
+          res.status(401).send("Not authorized");
+        }
+      } catch (error) {
+        console.error(
+          "Error during emitting student text prompt",
+          error.message
+        );
+        if (!res.headersSent) {
+          res.status(500).json({ error: error.message });
+        }
+      }
+    })
+    .catch((error) => {
+      console.error("Error sending data to Flask API:", error);
+      if (!res.headersSent) {
+        res.status(500).send("Error sending data to Flask API");
+      }
+    });
+});
+
 io.on("connection", (socket) => {
   console.log("A client connected:", socket.id);
 
@@ -321,39 +367,6 @@ io.on("connection", (socket) => {
   });
 });
 
-app.post("/upload_text", (req, res) => {
-  const clientId = req.query.clientId;
-  let textData = req.body;
-  console.log("Text data received = " + JSON.stringify(textData));
-
-  axios
-    .post("http://127.0.0.1:5000/markTexts", { textData: textData })
-    .then((response) => {
-      console.log("Response from Flask API:", response.data);
-      res.status(200).send(response.data); // Sending the response back to the client
-      try {
-        if (connectedClients[clientId]) {
-          connectedClients[clientId].emit(
-            "TextAnswerprocessingComplete",
-            response.data
-          );
-        } else {
-          res.status(401).send("Not authorized");
-          return;
-        }
-      } catch (error) {
-        console.error(
-          "Error during during emiting student text prompt",
-          error.message
-        );
-        res.status(500).json({ error: error.message });
-      }
-    })
-    .catch((error) => {
-      console.error("Error sending data to Flask API:", error);
-      res.status(500).send("Error sending data to Flask API");
-    });
-});
 //-----------------------------------------------------------------------------------------
 
 const authenticateObject = { authenticate: null, statusMessage: null };

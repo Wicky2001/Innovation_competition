@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-
 import downloadZipFile from "../functions/handleDownload";
 import { BsFileEarmarkZip } from "react-icons/bs";
 

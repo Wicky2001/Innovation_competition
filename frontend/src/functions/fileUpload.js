@@ -11,7 +11,7 @@ export function handleSubmit(event, clientId) {
 
     var textData = { answerText: answerText, markingText: markingText };
 
-    fetch(`http://localhost:5001/upload_text`, {
+    fetch(`http://localhost:5001/upload_text?clientId=${clientId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json", // Set the content type to JSON
