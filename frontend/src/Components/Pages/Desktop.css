@@ -3,28 +3,24 @@
 .main-content {
   margin-bottom: 10px; /* To ensure content isn't hidden behind the fixed UploadForm */
   overflow-y: auto;
+  padding: 0px;
   height: 65vh;
-  
 }
 .app-container {
   display: flex;
- 
 }
 
 .welcomeContainer {
-
   padding-top: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction:column;
+  flex-direction: column;
 }
 .welcomeContainer img {
- 
   padding-top: 70px;
 
   filter: grayscale(80%);
-  
 }
 
 .welcome {
@@ -45,8 +41,7 @@
   flex-grow: 1;
 }
 
-.formContainer{
-
+.formContainer {
 }
 
 body {
@@ -58,4 +53,3 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: rgb(28, 28, 28) !important;
 }
-

@@ -68,7 +68,7 @@ const Desktop = ({ clientId }) => {
             sideBarVisible={sideBarVisible}
           />
         </div>
-        <div className="main-content">
+        <div className="main-content container" style={{ padding: "0px" }}>
           {historyData.length > 0 ? (
             <ChatHistory
               clientId={clientId}

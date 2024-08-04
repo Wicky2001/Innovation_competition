@@ -1,0 +1,11 @@
+.row {
+  border: 1px solid rgb(228, 216, 216);
+}
+.feedbackTitle,
+.studentAnswerTitle,
+.marksTitle {
+  color: rgb(108, 133, 99);
+}
+.marks {
+  color: rgb(188, 37, 37);
+}
