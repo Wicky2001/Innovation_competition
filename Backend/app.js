@@ -335,7 +335,7 @@ app.post("/upload_text", (req, res) => {
         if (connectedClients[clientId]) {
           connectedClients[clientId].emit(
             "TextAnswerprocessingComplete",
-            resultDir
+            response.data
           );
         } else {
           res.status(401).send("Not authorized");
