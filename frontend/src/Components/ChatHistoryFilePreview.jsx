@@ -11,8 +11,10 @@ function ChatHistoryFilePreview({ downloadZipFile, data, clientId, key }) {
           borderRadius: "10px",
           marginTop: "7px",
           marginLeft: "0px",
-          border: "1px solid red",
+
           width: "100%",
+          backgroundColor: "rgb(28, 28, 28)",
+          border: "green solid 0.5px",
         }}
       >
         <div className="col zip-row-column">

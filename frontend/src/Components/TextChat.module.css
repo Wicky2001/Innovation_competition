@@ -1,11 +1,23 @@
 .row {
-  border: 1px solid rgb(228, 216, 216);
+  border-radius: 50px;
 }
 .feedbackTitle,
 .studentAnswerTitle,
 .marksTitle {
-  color: rgb(108, 133, 99);
+  color: rgb(207, 240, 195);
+  /* color: green; */
+  /* color: rgb(245, 239, 125); */
+  /* margin-bottom: 1px; */
 }
 .marks {
   color: rgb(188, 37, 37);
+}
+.feedback {
+  border: 1px solid rgb(201, 183, 183);
+  padding: 10px 5px;
+  border-radius: 10px;
+  font-size: small;
+}
+.studentAnswer {
+  font-size: small;
 }

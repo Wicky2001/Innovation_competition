@@ -77,9 +77,15 @@ const Desktop = ({ clientId }) => {
             />
           ) : (
             <div className="welcomeContainer">
-              <img src={logo} alt="Logo" className="logo" />
+              <div className="logo">
+                <img src={logo} alt="Logo" />
+              </div>
+
               <div className="welcome">
-                <h1>Welcome to Your Grading Assistant</h1>
+                <h1 className="companyName">Grading.AI</h1>
+                <h2 className="welcomeText">
+                  Your personal marking assistence
+                </h2>
               </div>
             </div>
           )}

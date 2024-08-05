@@ -17,7 +17,7 @@ function ChatHistory({ clientId, historyData }) {
           borderSpacing: "0 20px", // Vertical spacing between rows
         }}
       >
-        <tbody>
+        <tbody style={{ backgroundColor: "rgb(28, 28, 28)" }}>
           {historyData.map((data, key) => (
             <React.Fragment key={key}>
               {data.dataType === "PDF" ? (

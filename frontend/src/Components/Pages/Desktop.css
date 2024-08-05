@@ -11,32 +11,43 @@
 }
 
 .welcomeContainer {
-  padding-top: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-}
-.welcomeContainer img {
-  padding-top: 70px;
 
-  filter: grayscale(80%);
+  padding-top: 50px;
+}
+.logo {
+  /* border: 1px solid red; */
+  /* padding-top: 10px; */
+}
+.logo img {
+  filter: grayscale(20%);
+
+  width: 90%;
 }
 
 .welcome {
-  padding-top: 50px;
+  /* padding-top: 50px; */
+  /* border: 1px solid red; */
 }
-.welcome h1 {
-  color: rgb(196, 194, 194);
-  font-size: 25px;
+
+.companyName {
+  color: rgb(255, 255, 255);
+  font-size: 70px;
   font-weight: 600;
 
   font-family: "Open Sans", sans-serif;
   font-optical-sizing: auto;
   font-variation-settings: "wdth" 100;
-  margin-bottom: 50px;
+  letter-spacing: 2px;
+  margin-bottom: 1px;
 }
-
+.welcomeText {
+  font-size: 17px;
+  letter-spacing: 3.5px;
+  color: rgba(255, 251, 251, 0.742);
+}
 .content {
   flex-grow: 1;
 }
