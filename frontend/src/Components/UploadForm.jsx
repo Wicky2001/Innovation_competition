@@ -51,6 +51,7 @@ function UploadForm({ clientId, handleSubmit }) {
                     id="markingScheme"
                     disabled={disableFileInputs}
                     style={{ display: "none" }}
+                    multiple
                     onChange={(event) => {
                       if (event.target.files.length > 0) {
                         setMarkingSchemeFileSelected(true);
@@ -71,6 +72,7 @@ function UploadForm({ clientId, handleSubmit }) {
                   className="form-control"
                   id="MarkingText"
                   placeholder="Marking Scheme"
+                  multiple
                   onChange={(event) => {
                     if (event.target.value.length > 0) {
                       setDisableFileInputs(true);
