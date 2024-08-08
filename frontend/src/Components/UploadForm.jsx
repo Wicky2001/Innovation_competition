@@ -41,7 +41,7 @@ function UploadForm({ clientId, handleSubmit }) {
     <>
       <div className="container upload-container">
         <div className="row justify-content-center">
-          <form method="POST">
+          <form id="UploadForm" method="POST">
             <div className="row">
               <div className="col">
                 <div className="file-upload-wrapper">

@@ -17,19 +17,11 @@
 
   padding-top: 50px;
 }
-.logo {
-  /* border: 1px solid red; */
-  /* padding-top: 10px; */
-}
+
 .logo img {
   filter: grayscale(20%);
 
   width: 90%;
-}
-
-.welcome {
-  /* padding-top: 50px; */
-  /* border: 1px solid red; */
 }
 
 .companyName {
@@ -50,9 +42,6 @@
 }
 .content {
   flex-grow: 1;
-}
-
-.formContainer {
 }
 
 body {
