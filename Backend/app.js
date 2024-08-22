@@ -122,19 +122,19 @@ const storage = multer.diskStorage({
     }
   },
   filename: function (req, file, cb) {
-    if (file.fieldname === "markingSchemeFiles") {
-      // Use original name for marking scheme files
-      cb(null, file.originalname);
-    } else if (file.fieldname === "answerSheetFiles") {
-      // Append unique suffix for answer sheet files
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      cb(
-        null,
-        file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-      );
-    } else {
-      cb(new Error("Unexpected file fieldname"));
-    }
+    // if (file.fieldname === "markingSchemeFiles") {
+    // Use original name for marking scheme files
+    cb(null, file.originalname);
+    // } else if (file.fieldname === "answerSheetFiles") {
+    //   // Append unique suffix for answer sheet files
+    //   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    //   cb(
+    //     null,
+    //     file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    //   );
+    // } else {
+    //   cb(new Error("Unexpected file fieldname"));
+    // }
   },
 });
 
