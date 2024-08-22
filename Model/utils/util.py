@@ -48,7 +48,7 @@ def convert_pdf_to_images(pdf_folder_path):
         pdf_list.clear()
         for file_path in pdf_file_paths:
             # convert pdf to images
-            images = convert_from_path(file_path)
+            images = convert_from_path(file_path,poppler_path=r"C:\Users\Wicky\Documents\Innovation_competition-main\Model\poppler-24.07.0\Library\bin")
             converted_images = []
             for image in images:
                 # Convert PIL image to a numpy array
@@ -86,7 +86,7 @@ def extract_the_text_from_CV2image(cv2_image):
            """
 
     # Use environment variable for credentials
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Wicky\Documents\GitHub\Innovation_competition\credentials\innovation-competition-a66b761b487c.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"C:\Users\Wicky\Documents\Innovation_competition-main\Model\credentials\avid-circle-432005-d6-500c180b6ddf.json"
 
     client = vision.ImageAnnotatorClient()
 
@@ -183,6 +183,9 @@ def extract_question_and_answers(pdf_list_with_pdf_name_and_pdf_text):
         pdf_text = pdf['pdf_text']
         questions = re.findall(r'\[([^\]]+)\]', pdf_text)
         answers = re.findall(r'\{([^\}]+)\}', pdf_text)
+        print("Found question = ",questions)
+        print("Found answers = ", answers)
+
 
         pdf = {"pdf_name":pdf_name,"questions":questions,"answers":answers}
         pdf_list_with_answers_questions.append(pdf)

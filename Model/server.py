@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from tempData import pdf_list_with_pdf_name_and_pdf_text
+# from tempData import pdf_list_with_pdf_name_and_pdf_text
 from models import load_model, give_marks_for_descriptive_answers, give_feed_back_for_answers, \
     create_raw_knowledge_base, \
     split_knowledge_base, create_vector_database
@@ -62,11 +62,15 @@ def create_reports():
 
     markingSchemeContainerPath = os.path.join(chatDirectoryPath, markingSchemeContainerName)
     studentAnswersContainerPath = os.path.join(chatDirectoryPath, studentAnswersContainerName)
+    print("student Answer Path =", studentAnswersContainerPath)
 
     knowledege_base = create_raw_knowledge_base(markingSchemeContainerPath)
     splited_knowledege_base = split_knowledge_base(512, knowledege_base)
     vector_db = create_vector_database(splited_knowledege_base)
 
+    list_of_pdf = convert_pdf_to_images(studentAnswersContainerPath)
+    pdf_list_with_pdf_name_and_pdf_text = get_text_from_pdf(list_of_pdf)
+    print(pdf_list_with_pdf_name_and_pdf_text)
     question_answer_list = extract_question_and_answers(pdf_list_with_pdf_name_and_pdf_text)
     question_answer_list_with_marks = give_marks_for_descriptive_answers(question_answer_list, marks_model)
     question_answer_list_with_marks_feedbacks = give_feed_back_for_answers(question_answer_list_with_marks, vector_db)
