@@ -71,7 +71,7 @@ def create_reports():
     list_of_pdf = convert_pdf_to_images(studentAnswersContainerPath)
     pdf_list_with_pdf_name_and_pdf_text = get_text_from_pdf(list_of_pdf)
     print(pdf_list_with_pdf_name_and_pdf_text)
-    question_answer_list = extract_question_and_answers(pdf_list_with_pdf_name_and_pdf_text)
+    question_answer_list = _answers(pdf_list_with_pdf_name_and_pdf_text)
     question_answer_list_with_marks = give_marks_for_descriptive_answers(question_answer_list, marks_model)
     question_answer_list_with_marks_feedbacks = give_feed_back_for_answers(question_answer_list_with_marks, vector_db)
     reports_location = create_pdf_report(question_answer_list_with_marks_feedbacks, reportDirectoryPathForEachChat)
