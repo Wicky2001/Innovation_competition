@@ -55,7 +55,7 @@ pip install -r requirements.txt
 ```bash
 # Start backend server
 cd Backend
-node server.js  # Modify according to backend structure
+node app.js  # Modify according to backend structure
 
 # Start frontend
 cd ../frontend
@@ -75,9 +75,7 @@ python model.py  # Modify if needed
 ## Screenshots of the Application
 [Include relevant links/screenshots here]
 
-## Contributors
-- **BhasithaSan** - Major contributions on model and backend
-- **Dilanay** - Developed the frontend using React
+
 
 ## License
 This project is licensed under the MIT License. Feel free to contribute and improve upon it!
