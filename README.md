@@ -80,6 +80,4 @@ python model.py  # Modify if needed
 ## License
 This project is licensed under the MIT License. Feel free to contribute and improve upon it!
 
----
-Feel free to update this README with additional details specific to your project.
 
