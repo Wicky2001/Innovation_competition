@@ -1,83 +1,169 @@
-# Innovation Competition
+# Automatic Paper Marking Tool
 
-This is a public repository for the **Innovation Competition** project. It consists of multiple components, including backend, frontend, model, and storage for PDF files.
+This is the official repository for **Grading.AI** – a smart, AI-powered exam paper marking tool built for the **Innovation Competition** by **FutureGen**.
 
-## Repository Structure
+## 🚀 Why Grading.AI?
 
+Lecturers around the world face increasing burdens due to the rising student-to-teacher ratio, often exceeding global standards (e.g., 38:1 at SLIIT, 67:1 in the Philippines). Manual grading is time-consuming, inconsistent, and lacks actionable feedback.
 
-- **Backend/** - Built using Node.js, handles all the requests.
-- **Images/** - Includes assets related to the project, such as Google Vision API updates.
-- **Model/** - Implemented using Python, includes a RAG + classification model.
-- **Storage/PDF/** - Manages storage for PDF files.
-- **frontend/** - Developed using React.
+Grading.AI addresses this by providing:
 
+- 📄 Automated PDF-based exam grading
+- 🤖 Feedback aligned with marking schemes
+- 📊 Comprehensive student performance summaries
+- 🔁 Batch grading capabilities
+- 📈 AI-enhanced, personalized feedback
 
-## Features
+---
 
-- **Backend**: Implements API requests and handles logic using Node.js.
-- **Frontend**: React-based user interface.
-- **Model**: Python-based RAG (Retrieval-Augmented Generation) + classification model.
-- **Storage**: PDF storage and handling mechanisms.
-- **Google Vision API**: Integrated for image recognition and processing.
-- **Groq API**: Used to implement the RAG model (you must have a Groq API key to run this application).
+## 🧠 Tech Stack & Architecture
 
-## Setup Instructions
+- **Backend**: Node.js – Manages API requests and system logic
+- **Frontend**: React – Responsive UI for teachers and students
+- **Model**: Python – RAG (Retrieval-Augmented Generation) + Classification powered by Groq API
+- **OCR**: Google Vision API
+- **Storage**: Structured PDF file handling
+
+### Repository Structure
+
+```
+Innovation_Competition/
+├── Backend/       # Node.js backend
+├── frontend/      # React frontend
+├── Model/         # Python model (RAG + classifier)
+├── Storage/PDF/   # PDF exam file storage
+├── Images/        # Assets and visual documentation
+```
+
+---
+
+## 🌟 Features
+
+| Feature                           | Description                                          |
+| --------------------------------- | ---------------------------------------------------- |
+| 📥 PDF Upload                     | Upload handwritten or typed student exam PDFs        |
+| 🧮 Auto Grading                   | Automatically evaluate papers with the trained model |
+| 🗃️ Batch Support                  | Grade all student submissions at once                |
+| 📝 Feedback Reports               | Personalized feedback per paper                      |
+| 📋 Summary Reports                | Aggregated performance reports                       |
+| 🔐 Groq & Google Vision APIs      | Cutting-edge AI integrations                         |
+| 🌐 Multilingual Support (Planned) | Extendable to local language papers                  |
+
+---
+
+## 📦 Setup Instructions
 
 ### Prerequisites
-- Node.js & npm installed
-- Python (for model-related work)
-- Groq API key (mandatory for running the model)
-- Google Vision API key(mandatory for ocr part)
-- Database setup if required
+
+- Node.js & npm
+- Python 3.x
+- Groq API Key
+- Google Vision API Key
 
 ### Installation
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-repo/Innovation_Competition.git
-
-# Navigate into the project directory
 cd Innovation_Competition
 
-# Install dependencies for backend
+# Backend setup
 cd Backend
 npm install
 
-# Install dependencies for frontend
+# Frontend setup
 cd ../frontend
 npm install
 
-# Install dependencies for model
+# Model setup
 cd ../Model
 pip install -r requirements.txt
 ```
 
 ### Running the Project
-```bash
-# Start backend server
-cd Backend
-node app.js  # Modify according to backend structure
 
-# Start frontend
+```bash
+# Start Backend
+cd Backend
+node app.js
+
+# Start Frontend
 cd ../frontend
 npm start
 
-# Start model
+# Run Model
 cd ../Model
-python model.py  # Modify if needed
+python model.py
 ```
 
-## Usage Instructions
+---
 
-1. Upload student papers structured according to a specific format. [Include link to screenshots]
-2. The system will process the documents using the RAG model and classification.
-3. Once processed, a sample report will be generated. [Include link to screenshots]
+## 🧪 Usage Instructions
 
-## Screenshots of the Application
-[Include relevant links/screenshots here]
+1. Upload student exam PDFs in the specified format.
+2. Let the model evaluate answers and assign scores.
+3. Receive:
 
+   - Feedback reports per student
+   - A summary report for the full batch
 
+**\[Screenshots Coming Soon]**
 
-## License
-This project is licensed under the MIT License. Feel free to contribute and improve upon it!
+---
 
+## 🥇 Competitive Advantage
 
+Compared to GradingAI, Synaptic, ZipGrade, and Geniebook:
+
+| Feature                 | Grading.AI | Others |
+| ----------------------- | ---------- | ------ |
+| PDF Paper Evaluation    | ✅         | ❌     |
+| Marking Scheme Feedback | ✅         | ❌     |
+| Batch Grading Support   | ✅         | ❌     |
+| Summary Report          | ✅         | ❌     |
+| Personalized Feedback   | ✅         | ✅     |
+
+---
+
+## 🛣 Roadmap
+
+- ✅ MVP with frontend/backend/model integration
+- 🔄 Feedback loop from 5+ lecturers
+- 🔜 Local language support
+- 🔜 Complete examination platform with paper generation
+
+---
+
+## 💡 Subscription Plans
+
+| Plan        | Target            | Features                         |
+| ----------- | ----------------- | -------------------------------- |
+| Free Plan   | Students/Teachers | Basic grading + limited feedback |
+| API Plan    | Developers        | Model API access                 |
+| Pro Plan    | Power Users       | Full feedback + summary reports  |
+| Custom Plan | Institutions      | Custom workflows and integration |
+
+---
+
+## 📢 Go-to-Market Strategy
+
+- **Students/Teachers**: Freemium model, referrals, social media
+- **Institutions**: Pilot programs, workshops, partnerships
+- **Developers**: Hackathons, tutorials, open APIs
+
+---
+
+## 👨‍💻 Meet the Team – _FutureGen_
+
+Innovative minds from Sri Lanka, finalists of:
+
+- TECHX 2023 (IEEE)
+- Intellihack 3.0 (UCSC)
+- GENESIZ '24 (KDU)
+- Hackventure 1.0
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**. Contributions are welcome!
