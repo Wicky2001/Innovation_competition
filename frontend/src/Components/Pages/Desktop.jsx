@@ -9,7 +9,7 @@ import UploadForm from "../UploadForm";
 
 import "./Desktop.css";
 import SideBar from "../SideBar";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./Desktop.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -22,7 +22,6 @@ const Desktop = ({ clientId }) => {
     setSideBarVisible(!sideBarVisible);
   };
 
-  
   function removeDuplicates(array, key) {
     const unique = new Map();
     array.forEach((item) => {
@@ -37,17 +36,20 @@ const Desktop = ({ clientId }) => {
     // Handler function for data event
     const handleData = (data) => {
       setHistoryData((prevHistoryData) => {
+        console.log("received data from front end =>" + data);
         const updatedHistoryData = [...prevHistoryData, data];
         return removeDuplicates(updatedHistoryData, "chatId"); // Adjust the key as per your data structure
       });
     };
 
     // Listen for 'data' event from server
-    socket.on("data", handleData);
+    socket.on("PDFData", handleData);
+    socket.on("TextData", handleData);
 
     // Clean up on unmount
     return () => {
-      socket.off("data", handleData);
+      socket.off("PDFData", handleData);
+      socket.off("TextData", handleData);
     };
   }, []);
 
@@ -66,7 +68,7 @@ const Desktop = ({ clientId }) => {
             sideBarVisible={sideBarVisible}
           />
         </div>
-        <div className="main-content">
+        <div className="main-content container" style={{ padding: "0px" }}>
           {historyData.length > 0 ? (
             <ChatHistory
               clientId={clientId}
@@ -75,17 +77,22 @@ const Desktop = ({ clientId }) => {
             />
           ) : (
             <div className="welcomeContainer">
-              <img src={logo} alt="Logo" className="logo" />
+              <div className="logo">
+                <img src={logo} alt="Logo" />
+              </div>
+
               <div className="welcome">
-                <h1>Welcome to Your Grading Assistant</h1>
+                <h1 className="companyName">Grading.AI</h1>
+                <h2 className="welcomeText">
+                  Your personal marking assistence
+                </h2>
               </div>
             </div>
           )}
         </div>
         <div className="formContainer">
-        <UploadForm clientId={clientId} handleSubmit={handleSubmit} />
+          <UploadForm clientId={clientId} handleSubmit={handleSubmit} />
         </div>
-        
       </div>
     </div>
   );

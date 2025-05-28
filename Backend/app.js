@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import cors from "cors";
 import multer from "multer";
 import archiver from "archiver";
-import { spawn } from "child_process";
+import morgan from "morgan";
 import path from "path";
 import fs from "fs";
 import { promises as fsPromises } from "fs";
@@ -16,18 +16,23 @@ import { Strategy } from "passport-local";
 import session from "express-session";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
+import axios from "axios";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 // Load environment variables from .env file
 dotenv.config();
 
 const app = express();
+app.use(morgan("dev"));
+app.use(passport.initialize());
 const saltRounds = 10;
 const server = http.createServer(app);
 const io = new Server(server);
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // Replace with your frontend's origin
+    origin: "http://localhost:3000", // Replace with  frontend's origin
     credentials: true, // Allow credentials to be sent
   })
 );
@@ -36,13 +41,17 @@ app.use(
     secret: "TOPSECRETWORD",
     resave: false,
     saveUninitialized: true, //do not save session id who have no data
-    cookie: { secure: false, sameSite: "None" },
+    cookie: {
+      httpOnly: true,
+      sameSite: "Lax", // Add HttpOnly flag
+      secure: false,
+    },
   })
 );
-app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const db = new pg.Client({
   user: "postgres",
@@ -71,13 +80,14 @@ connectToDatabase();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const baseDirectory = "./PDF/";
+const baseDirectory = "../Storage/PDF/";
 let connectedClients = {}; // Store connected clients
 
 let chatDirectoryPath;
 let chatDirectoryName;
 let reports_location;
 let zipFilePath = null;
+let chatId = 1;
 
 // Custom middleware to create directories and set destination directory for multer
 async function createInnerDirectoriesMiddleware(req, res, next) {
@@ -112,11 +122,19 @@ const storage = multer.diskStorage({
     }
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
+    // if (file.fieldname === "markingSchemeFiles") {
+    // Use original name for marking scheme files
+    cb(null, file.originalname);
+    // } else if (file.fieldname === "answerSheetFiles") {
+    //   // Append unique suffix for answer sheet files
+    //   const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    //   cb(
+    //     null,
+    //     file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    //   );
+    // } else {
+    //   cb(new Error("Unexpected file fieldname"));
+    // }
   },
 });
 
@@ -262,6 +280,7 @@ function processFiles(dirForProcess, chatDirectoryName, clientId) {
 }
 
 const createZip = (clientId, reports_location) => {
+const createZip = (clientId, reports_location) => {
   const zipFilename = "results.zip";
   const zipPath = path.join(reports_location, zipFilename);
   const output = fs.createWriteStream(zipPath);
@@ -273,12 +292,14 @@ const createZip = (clientId, reports_location) => {
 
   output.on("finish", () => {
     const dataForFrontEnd = {
+      dataType: "PDF",
       zipFilePath: zipPath,
-      chatId: chatDirectoryName,
+      chatId: "chat " + chatId, // Assign chatId here
       processComplete: true,
     };
-    connectedClients[clientId].emit("data", dataForFrontEnd);
+    connectedClients[clientId].emit("PDFData", dataForFrontEnd);
     console.log(dataForFrontEnd);
+    chatId++;
     // sending location of the zip file to frontend
   });
 
@@ -325,6 +346,51 @@ app.get("/download-results", (req, res) => {
   });
 });
 
+app.post("/upload_text", (req, res) => {
+  const clientId = req.query.clientId;
+  console.log("client id = ", clientId);
+  let textData = req.body;
+  console.log("Text data received = " + JSON.stringify(textData));
+
+  axios
+    .post("http://127.0.0.1:5000/markTexts", { textData: textData })
+    .then((response) => {
+      console.log("Response from Flask API:", response.data);
+
+      try {
+        const dataForFrontEnd = {
+          chatId: "chat " + chatId, // Assign chatId here
+          dataType: "Text",
+          processComplete: true,
+          textData: response.data,
+        };
+
+        if (connectedClients[clientId]) {
+          // Send text data to the client
+          connectedClients[clientId].emit("TextData", dataForFrontEnd);
+          chatId++;
+          res.status(200).send(response.data); // Sending the response back to the client
+        } else {
+          res.status(401).send("Not authorized");
+        }
+      } catch (error) {
+        console.error(
+          "Error during emitting student text prompt",
+          error.message
+        );
+        if (!res.headersSent) {
+          res.status(500).json({ error: error.message });
+        }
+      }
+    })
+    .catch((error) => {
+      console.error("Error sending data to Flask API:", error);
+      if (!res.headersSent) {
+        res.status(500).send("Error sending data to Flask API");
+      }
+    });
+});
+
 io.on("connection", (socket) => {
   console.log("A client connected:", socket.id);
 
@@ -345,9 +411,24 @@ io.on("connection", (socket) => {
     }
   });
 });
-//--------------------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------------------
 
 const authenticateObject = { authenticate: null, statusMessage: null };
+
+app.get("/isAuthenticated", (req, res) => {
+  if (req.isAuthenticated()) {
+    //req.isAuthenticated() will return true if user is logged in
+    console.log("User is authenticated");
+    authenticateObject.authenticate = true;
+    authenticateObject.statusMessage = "you got permission";
+    res.json(authenticateObject);
+  } else {
+    authenticateObject.authenticate = false;
+    authenticateObject.statusMessage = "you have no permission";
+    res.json(authenticateObject);
+  }
+});
 
 app.post("/register", async (req, res) => {
   const name = req.body.name;
@@ -360,9 +441,9 @@ app.post("/register", async (req, res) => {
     ]);
 
     if (checkResult.rows.length > 0) {
-      // req.redirect("/login"); //need to modify
       authenticateObject.statusMessage = "you need to log in";
       authenticateObject.authenticate = false;
+      console.log("You neeed to log in");
       res.json(authenticateObject);
     } else {
       bcrypt.hash(password, saltRounds, async (err, hash) => {
@@ -378,11 +459,17 @@ app.post("/register", async (req, res) => {
             const user = result.rows[0];
 
             req.login(user, (err) => {
-              console.log("passport error occur login user" + err);
+              if (err) {
+                console.error("Passport error during login:", err);
+                return res
+                  .status(500)
+                  .json({ message: "Login failed", error: err });
+              } else {
+                authenticateObject.statusMessage = "You are authenticated";
+                authenticateObject.authenticate = true;
+                return res.json(authenticateObject);
+              }
             });
-            authenticateObject.statusMessage = "you are authenticated";
-            authenticateObject.authenticate = true;
-            res.json(authenticateObject);
           } catch (error) {
             console.log("error ocuuer when inserting user into db" + error);
           }
@@ -433,6 +520,7 @@ passport.use(
         const result = await db.query("SELECT * FROM users WHERE email = $1", [
           email,
         ]);
+
         if (result.rows.length > 0) {
           const user = result.rows[0];
           const storedHashedPassword = user.password;
